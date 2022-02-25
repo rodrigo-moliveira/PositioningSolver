@@ -1,0 +1,7 @@
+{
+  "Single frequency - 1C": "./workspace/outputs_gnss/gnss_2/spp_1c/",
+
+  "Iono Free - 1C, 2W": "./workspace/outputs_gnss/gnss_2/spp_1c_2w_if/",
+
+  "Dual Frequency - 1C, 2W": "./workspace/outputs_gnss/gnss_2/spp_1c_2w_df/"
+}
