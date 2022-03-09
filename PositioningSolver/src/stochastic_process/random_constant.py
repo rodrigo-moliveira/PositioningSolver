@@ -4,13 +4,14 @@ from .process import StochasticProcessGen
 
 class RandomConstant(StochasticProcessGen):
 
-    def __init__(self, dim, std):
+    def __init__(self, dim=1, std=1, axis=1):
         # std is discrete time standard deviation
-        super().__init__(dim)
+        super().__init__(dim=dim, axis=axis)
         self._name = "RandomConstant"
 
         self._std = std
 
     def compute(self):
-        val = np.random.normal(scale=self._std, size=1)
-        return np.ones(self._dim) * val
+        val = np.random.normal(scale=self._std, size=self._axis)
+
+        return np.ones((self._dim, self._axis)) * val

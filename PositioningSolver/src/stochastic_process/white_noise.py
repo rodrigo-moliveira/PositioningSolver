@@ -4,12 +4,12 @@ from .process import StochasticProcessGen
 
 class WhiteNoise(StochasticProcessGen):
 
-    def __init__(self, dim, std):
+    def __init__(self, dim=1, std=1, axis=1):
         # std is discrete time standard deviation
-        super().__init__(dim)
+        super().__init__(dim=dim, axis=axis)
         self._name = "WhiteNoise"
 
         self._std = std
 
     def compute(self):
-        return np.random.normal(scale=self._std, size=self._dim)
+        return np.random.normal(scale=self._std, size=(self._dim, self._axis))
