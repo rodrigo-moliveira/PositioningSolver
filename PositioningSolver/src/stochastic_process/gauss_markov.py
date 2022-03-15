@@ -7,7 +7,7 @@ class GaussMarkov(StochasticProcessGen):
     def __init__(self, dim=1, std=1, correlation_time=1, axis=1, initial=None, sampling_time=1):
         # std is discrete time standard deviation
         super().__init__(dim=dim, axis=axis)
-        self._name = "GaussMarkov"
+        self._name = "Gauss Markov"
 
         self._std = np.array(std)
         self._sampling_time = sampling_time

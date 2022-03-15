@@ -100,6 +100,10 @@ def plot_1D_TimeSeries(series: TimeSeries, **kwargs):
     return ax
 
 
+def grid():
+    plt.grid(True)
+
+
 def plot_1D(x, y, **kwargs):
 
     # convert x from Epoch to datetime Objects
@@ -111,13 +115,49 @@ def plot_1D(x, y, **kwargs):
     if ax is None:
         fig, ax = plt.subplots()
 
-    ax.plot(x, y, linewidth=2.0, label=kwargs.get("label", None))
+    ax.plot(x, y, linewidth=kwargs.get("linewidth", 2.0), label=kwargs.get("label", None),
+            marker=kwargs.get("marker", ''), markersize=kwargs.get("markersize", 5))
     ax.set_xlabel(kwargs.get("x_label", ""))
     ax.set_ylabel(kwargs.get("y_label", ""))
     ax.set_title(kwargs.get("title", ""))
 
     if "set_legend" in kwargs:
         ax.legend()
+
+    if kwargs.get("tight_layout", False) is True:
+        plt.tight_layout()
+
+    if kwargs.get("equal", False) is True:
+        ax.axis("equal")
+
+    if "y_scale" in kwargs:
+        plt.yscale(kwargs.get("y_scale", "linear"))
+
+    return ax
+
+
+def loglog(x, y, **kwargs):
+
+    # convert x from Epoch to datetime Objects
+    if isinstance(x[0], Epoch):
+        x = [i.to_datetime() for i in x]
+
+    # try to fetch axis to insert the plot. If no ax is provided, create a new one
+    ax = kwargs.get("ax", None)
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    ax.loglog(x, y, linewidth=kwargs.get("linewidth", 2.0), label=kwargs.get("label", None),
+            marker=kwargs.get("marker", ''), markersize=kwargs.get("markersize", 5))
+    ax.set_xlabel(kwargs.get("x_label", ""))
+    ax.set_ylabel(kwargs.get("y_label", ""))
+    ax.set_title(kwargs.get("title", ""))
+
+    if "set_legend" in kwargs:
+        ax.legend()
+
+    if kwargs.get("tight_layout", False) is True:
+        plt.tight_layout()
 
     return ax
 

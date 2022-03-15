@@ -7,8 +7,15 @@ class StochasticProcessGen:
         self._axis = axis
         self._name = "General Process"
 
-    def __str__(self):
+    def __repr__(self):
         return f"StochasticProcess({self._name}, dim = {self._dim}, axis = {self._axis})"
+
+    def __str__(self):
+        return self._name
+
+    @property
+    def axes(self):
+        return self._axis
 
     def compute(self):
         return np.zeros((self._dim, self._axis))

@@ -7,7 +7,7 @@ class RandomWalk(StochasticProcessGen):
     def __init__(self, dim=1, std=1, axis=1, initial=None):
         # std is discrete time standard deviation
         super().__init__(dim=dim, axis=axis)
-        self._name = "RandomWalk"
+        self._name = "Random Walk"
 
         self._std = std
         if initial is not None:
