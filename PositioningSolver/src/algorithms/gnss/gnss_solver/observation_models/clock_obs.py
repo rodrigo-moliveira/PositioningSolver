@@ -1,7 +1,7 @@
 from numpy.linalg import norm
 
 from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models import ephemeride_propagator
-from PositioningSolver.src.data_types.orbits.frame import matrix_ECEF2ECI
+from PositioningSolver.src.data_types.state_space.utils import matrix_ECEF2ECI
 from PositioningSolver.src.math_utils.Constants import Constant
 
 # utility functions related to navigation clocks
@@ -27,7 +27,7 @@ def compute_TX_time_geometric(r_receiver=None, t_reception=None, dt_receiver=Non
     where R() is the rotation matrix from ECEF to ECI, and c is the speed of light
 
     Args:
-        r_receiver (src.data_types.orbits.statevector.Position): position of receiver at reception time
+        r_receiver (src.data_types.state_space.statevector.Position): position of receiver at reception time
                                                                 (RINEX time tag measured by receiver clock)
         t_reception (src.data_types.basics.Epoch.Epoch): time of signal reception, measured by receiver
                                                         (receiver clock), i.e., RINEX obs time tag

@@ -8,7 +8,7 @@ from ..src.config import config, validate_config
 
 from ..src.data_types.containers.DataManager import GNSSDataManager
 from ..src.data_types.gnss.Constellation import SatelliteSystem
-from ..src.data_types.orbits.statevector import Position
+from ..src.data_types.state_space.gnss_state import PositionGNSS
 from ..src.io_manager.import_rinex import read_data
 from ..src.quality_check.qm_gnss import GNSSQualityManager
 from ..src.utils.errors import ConfigError
@@ -131,10 +131,10 @@ def main(path_to_config_file):
         exit(-1)
 
     # 4 - Quality Check module
-    true_position = Position([config["performance_evaluation"]["true_position"]["x_ecef"],
+    true_position = PositionGNSS([config["performance_evaluation"]["true_position"]["x_ecef"],
                               config["performance_evaluation"]["true_position"]["y_ecef"],
                               config["performance_evaluation"]["true_position"]["z_ecef"]],
-                             None, "ECEF", "cartesian")
+                             "ECEF", "cartesian")
     try:
         GNSSQualityManager.process(output_path, trace_path, true_position,
                                    data_manager.receiver_position, data_manager.receiver_clock,

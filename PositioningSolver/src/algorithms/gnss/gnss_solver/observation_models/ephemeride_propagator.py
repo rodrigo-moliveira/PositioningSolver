@@ -3,8 +3,8 @@ from math import sqrt, cos, sin
 import numpy
 
 from PositioningSolver.src.math_utils.Constants import Constant
-from PositioningSolver.src.data_types.orbits.frame import M2E, E2v, matrix_ECEF2ECI
-from PositioningSolver.src.data_types.orbits.statevector import Position
+from PositioningSolver.src.data_types.state_space.utils import M2E, E2v, matrix_ECEF2ECI
+from PositioningSolver.src.data_types.state_space.gnss_state import PositionGNSS
 
 
 def correct_gps_week_crossovers(time_diff: float) -> float:
@@ -38,7 +38,7 @@ class EphemeridePropagator:
 
     @staticmethod
     def get_sat_position_and_true_range(nav_message, time_emission, transit, rec_position, relativistic_correction) ->\
-            tuple[Position, numpy.array, float]:
+            tuple[PositionGNSS, numpy.array, float]:
         """
         Computes:
             * the satellite ephemeride
@@ -76,7 +76,7 @@ class EphemeridePropagator:
         return p_sat, rho_0, dt_relative
 
     @staticmethod
-    def compute(nav_message, epoch, relativistic_correction, constellation="GPS") -> tuple[Position, float]:
+    def compute(nav_message, epoch, relativistic_correction, constellation="GPS") -> tuple[PositionGNSS, float]:
         """
         Computes the satellite ephemeride at the requested epoch, given the closest (valid) navigation data point
 
@@ -179,7 +179,7 @@ class EphemeridePropagator:
         z_ECEF = y_orbital * sin(i)
 
         # get StateVector object
-        position = Position([x_ECEF, y_ECEF, z_ECEF], epoch, "ECEF", "cartesian")
+        position = PositionGNSS([x_ECEF, y_ECEF, z_ECEF], "ECEF", "cartesian")
 
         # compute relativistic correction
         rel_correction = 0

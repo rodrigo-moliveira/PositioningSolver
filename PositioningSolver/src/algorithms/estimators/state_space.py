@@ -1,5 +1,5 @@
 from ...data_types.containers.Container import Container
-from ...data_types.orbits.statevector import Position
+from ...data_types.state_space.gnss_state import PositionGNSS
 
 
 class StateSpace(Container):
@@ -14,7 +14,7 @@ class SPPStateSpace(StateSpace):
 
         # mandatory fields (initialized to 0)
         self.receiver_position = kwargs.get("receiver_position",
-                                            Position([0, 0, 0], None, "ECEF", "cartesian"))  # fallback
+                                            PositionGNSS([0, 0, 0], "ECEF", "cartesian"))  # fallback
         self.receiver_clock = kwargs.get("receiver_clock",
                                          0)  # fallback
 

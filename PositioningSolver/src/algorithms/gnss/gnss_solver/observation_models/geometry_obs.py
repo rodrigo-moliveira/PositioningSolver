@@ -1,7 +1,7 @@
 from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.ephemeride_propagator import EphemeridePropagator
 from PositioningSolver.src.data_types.basics.DataType import DataTypeFactory, DataType
 from PositioningSolver.src.data_types.containers.Container import Container
-from PositioningSolver.src.data_types.orbits.frame import ENU2AzEl
+from PositioningSolver.src.data_types.state_space.utils import ENU2AzEl
 from PositioningSolver.src.utils.errors import NonExistentObservable
 
 C1 = DataTypeFactory("C1")
@@ -41,7 +41,7 @@ class SatelliteGeometry(Container):
         reconstruction equation, for a given satellite.
 
         Args:
-            rec_pos (src.data_types.orbits.statevector.Position) : Receiver position
+            rec_pos (src.data_types.state_space.statevector.Position) : Receiver position
             epoch (src.data_types.basics.Epoch.Epoch) : epoch under evaluation
             rec_bias (float) : Receiver clock bias
             nav_message (src.data_types.containers.NavigationData.NavigationPointGPS) : navigation point for the
@@ -137,7 +137,7 @@ class SystemGeometry:
 
         Args:
             epoch (src.data_types.basics.Epoch.Epoch) : epoch under evaluation
-            receiver_position (src.data_types.orbits.statevector.Position) : Receiver position
+            receiver_position (src.data_types.state_space.statevector.Position) : Receiver position
             receiver_clock (float) : Receiver clock bias
             compute_TX_time (function) : function to compute the transmission time
             main_datatype (DataType) : Code observation to use in some computations

@@ -3,7 +3,7 @@
 import numpy as np
 
 from ...utils.errors import OrbitError, FrameError, FormError
-from .frame import Geodetic2Cartesian, Cartesian2Geodetic, ECEF2ENU, ENU2ECEF
+from .utils import Geodetic2Cartesian, Cartesian2Geodetic, ECEF2ENU, ENU2ECEF
 
 
 def validate_frame(frame):
@@ -44,11 +44,10 @@ def validate_form(form):
 class _StateVector(np.ndarray):
     """Coordinate representation"""
 
-    def __new__(cls, coord, date, frame, form, **kwargs):
+    def __new__(cls, coord, frame, form, **kwargs):
         """
         Args:
             coord (list): state vector array
-            date (Epoch, float): Date associated with the state vector
             form (str): Name of the form of the state vector
             frame (str): Name of the frame of reference of the state vector
         """
@@ -64,7 +63,6 @@ class _StateVector(np.ndarray):
         )
         obj._data = kwargs
 
-        obj._data["date"] = date
         obj._data["frame"] = frame
         obj._data["form"] = form
         obj._data["state_str"] = cls.state_str
@@ -154,7 +152,6 @@ class _StateVector(np.ndarray):
 
         fmt = f"""
 StateVector =
-  date  = {self.date}
   frame = {self.frame}
   form = {self.form}
   coord = 
@@ -165,19 +162,11 @@ StateVector =
         return fmt
 
     @property
-    def date(self):
-        return self._data["date"]
-
-    @date.setter
-    def date(self, value):
-        self._data["date"] = value
-
-    @property
     def to_numpy(self):
         return np.array(self)
 
 
-class Position(_StateVector):
+class PositionGNSS(_StateVector):
     """
     class Position, derived from _StateVector
 
@@ -277,9 +266,3 @@ class Position(_StateVector):
         self.base.setfield(new_coord, dtype=float)
         self._data["frame"] = new_frame
 
-
-class Velocity(_StateVector):
-    _forms = {"cartesian": ["vx", "vy", "vz"],
-              }
-    state_str = "velocity"
-    pass
