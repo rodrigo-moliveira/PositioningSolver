@@ -4,12 +4,12 @@ import numpy as np
 from PositioningSolver.src import get_logger
 from PositioningSolver.src.algorithms.estimators.state_space import SPPStateSpace
 from PositioningSolver.src.algorithms.estimators.weighted_ls import WeightedLeastSquares
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.geometry_obs import SystemGeometry
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.observation_reconstructor import ObservationReconstruction
+from PositioningSolver.src.gnss.observation_models.geometry_obs import SystemGeometry
+from PositioningSolver.src.gnss.observation_models.observation_reconstructor import ObservationReconstruction
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.utils.errors import ConfigError, PVTComputationFail
 from PositioningSolver.src.data_types.basics.DataType import DataType, DataTypeFactory
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models import clock_obs
+from PositioningSolver.src.gnss.observation_models import clock_obs
 
 np.set_printoptions(linewidth=np.inf)
 
@@ -188,7 +188,7 @@ class GPSSolver:
             estimated_iono (src.data_types.containers.TimeSeries.TimeSeries) : estimated ionosphere (for dual-frequency)
             prefit_residuals (src.data_types.containers.TimeSeries.TimeSeries) : prefit residuals output
             postfit_residuals (src.data_types.containers.TimeSeries.TimeSeries) : postfit residuals output
-            DOPs (src.data_types.gnss.DOP.DOP) : DOPs output timeseries
+            DOPs (src.data_types.data_types.DOP.DOP) : DOPs output timeseries
             sat_info (src.data_types.containers.TimeSeries.TimeSeries) : satellite info time series
         """
 

@@ -3,8 +3,8 @@ from math import sqrt, cos, sin
 import numpy
 
 from PositioningSolver.src.math_utils.Constants import Constant
-from PositioningSolver.src.data_types.state_space.utils import M2E, E2v, matrix_ECEF2ECI
-from PositioningSolver.src.data_types.state_space.gnss_state import PositionGNSS
+from PositioningSolver.src.gnss.state_space.utils import M2E, E2v, matrix_ECEF2ECI
+from PositioningSolver.src.gnss.state_space.gnss_state import PositionGNSS
 
 
 def correct_gps_week_crossovers(time_diff: float) -> float:
@@ -81,7 +81,7 @@ class EphemeridePropagator:
         Computes the satellite ephemeride at the requested epoch, given the closest (valid) navigation data point
 
         Args:
-            constellation (src.data_types.gnss.SatelliteSystem) : the constellation to process
+            constellation (src.data_types.data_types.SatelliteSystem) : the constellation to process
             nav_message (src.data_types.containers.NavigationData.NavigationPointGPS) : navigation data point object
             epoch (src.data_types.basics.Epoch.Epoch) : Epoch to compute the ephemerides. For a correct implementation,
                                                         should be in GPS time (not SV nor receiver time)

@@ -1,7 +1,7 @@
 from numpy.linalg import norm
 
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models import ephemeride_propagator
-from PositioningSolver.src.data_types.state_space.utils import matrix_ECEF2ECI
+from PositioningSolver.src.gnss.observation_models import ephemeride_propagator
+from PositioningSolver.src.gnss.state_space.utils import matrix_ECEF2ECI
 from PositioningSolver.src.math_utils.Constants import Constant
 
 # utility functions related to navigation clocks
@@ -81,7 +81,7 @@ def compute_TX_time_pseudorange(pseudorange_obs=None, t_reception=None, nav_mess
         -> tau = t(reception)^{receiver} - t(emission)^{satellite}
 
     Args:
-        pseudorange_obs (src.data_types.gnss.Observation.Observation): the pseudorange measured observable
+        pseudorange_obs (src.data_types.data_types.Observation.Observation): the pseudorange measured observable
         t_reception (src.data_types.basics.Epoch.Epoch): time of signal reception, measured by receiver
                                                 (receiver clock), i.e., RINEX obs time tag -> t(reception)^{receiver}
         TGD (float): time group delay (TGD) to correct the satellite hardware clock delay to the appropriate frequency

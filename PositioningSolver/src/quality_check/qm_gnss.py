@@ -1,5 +1,5 @@
 from .. import get_logger
-from ..data_types.containers.RMS import RMS
+from PositioningSolver.src.gnss.data_types.RMS import RMS
 from ..math_utils.Constants import Constant
 from ..plots.plot_manager import *
 

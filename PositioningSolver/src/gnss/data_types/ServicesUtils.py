@@ -1,4 +1,4 @@
-from ..basics.DataType import DataTypeFactory
+from PositioningSolver.src.data_types.basics.DataType import DataTypeFactory
 
 """
 Utility maps and dicts to deal with the constellations and services.

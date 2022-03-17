@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from ..data_types import ObservationData
+from PositioningSolver.src.gnss.data_types.ObservationData import ObservationData
 from ..data_types.basics.Epoch import Epoch
 from ..data_types.containers.TimeSeries import TimeSeries
 from ..plots.skyplot import plot_sky
@@ -57,7 +57,6 @@ def plot_skyplot(sat_info_series):
 
 
 def plot_3D_trajectory(data_points, **kwargs):
-
     # try to fetch axis to insert the plot. If no ax is provided, create a new one
     ax = kwargs.get("ax", None)
     if ax is None:
@@ -105,7 +104,6 @@ def grid():
 
 
 def plot_1D(x, y, **kwargs):
-
     # convert x from Epoch to datetime Objects
     if isinstance(x[0], Epoch):
         x = [i.to_datetime() for i in x]
@@ -137,7 +135,6 @@ def plot_1D(x, y, **kwargs):
 
 
 def loglog(x, y, **kwargs):
-
     # convert x from Epoch to datetime Objects
     if isinstance(x[0], Epoch):
         x = [i.to_datetime() for i in x]
@@ -148,7 +145,7 @@ def loglog(x, y, **kwargs):
         fig, ax = plt.subplots()
 
     ax.loglog(x, y, linewidth=kwargs.get("linewidth", 2.0), label=kwargs.get("label", None),
-            marker=kwargs.get("marker", ''), markersize=kwargs.get("markersize", 5))
+              marker=kwargs.get("marker", ''), markersize=kwargs.get("markersize", 5))
     ax.set_xlabel(kwargs.get("x_label", ""))
     ax.set_ylabel(kwargs.get("y_label", ""))
     ax.set_title(kwargs.get("title", ""))

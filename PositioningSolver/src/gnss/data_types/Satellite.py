@@ -1,4 +1,4 @@
-from ...data_types.gnss.Constellation import SatelliteSystem, SatelliteSystemFactory
+from PositioningSolver.src.gnss.data_types.Constellation import SatelliteSystem, SatelliteSystemFactory
 
 # list of all satellites for the SatelliteFactory
 __all_sats__ = []

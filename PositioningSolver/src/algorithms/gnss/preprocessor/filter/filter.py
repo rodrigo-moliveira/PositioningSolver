@@ -1,6 +1,6 @@
 # base filter class
-from PositioningSolver.src.data_types.gnss.Observation import Observation
-from PositioningSolver.src.data_types.gnss.Satellite import Satellite
+from PositioningSolver.src.gnss.data_types.Observation import Observation
+from PositioningSolver.src.gnss.data_types.Satellite import Satellite
 from PositioningSolver.src.data_types.basics.Epoch import Epoch
 
 

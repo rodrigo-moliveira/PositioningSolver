@@ -1,6 +1,6 @@
-from ...utils.errors import UnknownService
-from ...data_types.gnss.ServicesUtils import GPSAvailableServices, GALAvailableServices
-from ...data_types.gnss.Satellite import SatelliteSystem
+from PositioningSolver.src.utils.errors import UnknownService
+from PositioningSolver.src.gnss.data_types.ServicesUtils import GPSAvailableServices, GALAvailableServices
+from PositioningSolver.src.gnss.data_types import SatelliteSystem
 
 
 class ServiceManager:
@@ -108,4 +108,3 @@ class ServiceManager:
 
     def __str__(self):
         return str(self._services)
-

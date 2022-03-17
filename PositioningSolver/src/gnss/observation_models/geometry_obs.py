@@ -1,7 +1,7 @@
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.ephemeride_propagator import EphemeridePropagator
+from PositioningSolver.src.gnss.observation_models.ephemeride_propagator import EphemeridePropagator
 from PositioningSolver.src.data_types.basics.DataType import DataTypeFactory, DataType
 from PositioningSolver.src.data_types.containers.Container import Container
-from PositioningSolver.src.data_types.state_space.utils import ENU2AzEl
+from PositioningSolver.src.gnss.state_space.utils import ENU2AzEl
 from PositioningSolver.src.utils.errors import NonExistentObservable
 
 C1 = DataTypeFactory("C1")
@@ -47,7 +47,7 @@ class SatelliteGeometry(Container):
             nav_message (src.data_types.containers.NavigationData.NavigationPointGPS) : navigation point for the
                                                                                         satellite under evaluation
             computeTX (function) : function to compute the transmission time
-            PR_obs (src.data_types.gnss.Observation.Observation) : Code observation to use in some computations
+            PR_obs (src.data_types.data_types.Observation.Observation) : Code observation to use in some computations
             relativistic_correction (bool) : whether or not to compute relativistic correction
         """
 
@@ -174,7 +174,7 @@ class SystemGeometry:
         Computes the line of sight vector between the receiver and the satellite, used in the PVT geometry matrix.
 
         Args:
-            sat (src.data_types.gnss.Satellite.Satellite) : satellite to compute the LOS vector
+            sat (src.data_types.data_types.Satellite.Satellite) : satellite to compute the LOS vector
 
         Return:
             list [float, float, float] : Line of sight for [x, y, z] axis of ECEF frame

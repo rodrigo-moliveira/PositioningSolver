@@ -1,7 +1,7 @@
-from PositioningSolver.src.data_types import ObservationData
+from PositioningSolver.src.gnss.data_types.ObservationData import ObservationData
 from . import Functor
 from PositioningSolver.src.data_types.basics.DataType import DataType
-from PositioningSolver.src.data_types.gnss.Observation import Observation
+from PositioningSolver.src.gnss.data_types.Observation import Observation
 
 from PositioningSolver.src.utils.errors import NonExistentObservable
 

@@ -1,5 +1,5 @@
-from ...data_types.gnss.ServicesUtils import AvailableConstellations, ConstellationToCodeMap
-from ...utils.errors import UnknownConstellation
+from PositioningSolver.src.gnss.data_types.ServicesUtils import AvailableConstellations, ConstellationToCodeMap
+from PositioningSolver.src.utils.errors import UnknownConstellation
 
 
 class SatelliteSystem(str):

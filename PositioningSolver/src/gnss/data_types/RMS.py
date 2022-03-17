@@ -1,8 +1,8 @@
 import numpy as np
 
-from ...data_types.containers.Container import Container
-from ...data_types.containers.TimeSeries import TimeSeries
-from ...quality_check.rms_manager import compute_error_static, compute_RMS_stats_static
+from PositioningSolver.src.data_types.containers.Container import Container
+from PositioningSolver.src.data_types.containers.TimeSeries import TimeSeries
+from PositioningSolver.src.quality_check.rms_manager import compute_error_static, compute_RMS_stats_static
 
 
 class _RMS(Container):

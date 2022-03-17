@@ -1,7 +1,7 @@
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.atmosphere_obs import ionosphereCorrection, troposphericCorrection
-from PositioningSolver.src.algorithms.gnss.gnss_solver.observation_models.clock_obs import SVBroadcastCorrection
+from PositioningSolver.src.gnss.observation_models.atmosphere_obs import ionosphereCorrection, troposphericCorrection
+from PositioningSolver.src.gnss.observation_models.clock_obs import SVBroadcastCorrection
 from PositioningSolver.src.data_types.basics.DataType import DataType, DataTypeFactory
-from PositioningSolver.src.data_types.gnss.Observation import Observation
+from PositioningSolver.src.gnss.data_types.Observation import Observation
 from PositioningSolver.src.math_utils.Constants import Constant
 
 # Disclaimer: The most correct way to implement the 'ObservationReconstruction' class would be the following. First,

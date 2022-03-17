@@ -1,4 +1,4 @@
-from ...data_types.basics.DataType import DataType
+from PositioningSolver.src.data_types.basics.DataType import DataType
 
 
 class Observation:

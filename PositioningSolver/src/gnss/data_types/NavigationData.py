@@ -1,9 +1,9 @@
 from collections import OrderedDict
-from ...utils.errors import TimeSeriesError
-from ...data_types.basics.Epoch import Epoch
-from ...data_types.gnss.Satellite import Satellite
-from .TimeSeries import TimeSeries
-from .Container import Container
+from PositioningSolver.src.utils.errors import TimeSeriesError
+from PositioningSolver.src.data_types.basics.Epoch import Epoch
+from PositioningSolver.src.gnss.data_types.Satellite import Satellite
+from PositioningSolver.src.data_types.containers.TimeSeries import TimeSeries
+from PositioningSolver.src.data_types.containers.Container import Container
 
 
 # Note: currently only GPS navigation messages are allowed.

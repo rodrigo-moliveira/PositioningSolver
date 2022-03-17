@@ -47,3 +47,6 @@ def rot3(theta):
             [0, 0, 1],
         ]
     )
+
+
+# TODO : skew symmetric to angle, angle to skew symmetric

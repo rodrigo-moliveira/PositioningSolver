@@ -1,10 +1,10 @@
 import numpy as np
 
-from ...data_types.basics.Epoch import Epoch
-from ...data_types.containers.Container import Container
-from ...data_types.containers.TimeSeries import TimeSeries
-from ...math_utils.Constants import Constant
-from ...math_utils.matrix import rot1, rot3
+from PositioningSolver.src.data_types.basics.Epoch import Epoch
+from PositioningSolver.src.data_types.containers.Container import Container
+from PositioningSolver.src.data_types.containers.TimeSeries import TimeSeries
+from PositioningSolver.src.math_utils.Constants import Constant
+from PositioningSolver.src.math_utils.matrix import rot1, rot3
 
 
 class _DOP(Container):

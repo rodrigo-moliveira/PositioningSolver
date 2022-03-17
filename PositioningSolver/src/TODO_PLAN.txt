@@ -1,0 +1,19 @@
+math_utils/matrix:
+    - função de conversão skew symmetric <-> angles
+
+/src/ins/attitude
+    Matriz E <-> N (lat, long)
+    Matriz N <-> B (ângulos Euler)  / euler2dcm
+
+/src/ins/mechanization
+    vetor w_{en}^n
+    vetor w_{ie}^e, vetor w_{ie}^n
+    vetor w_{nb}^b(euler dot)
+
+vetor gravidade
+
+Eqs. da dinâmica:
+    posicao
+    vel
+    atitude (dcm e euler)
+

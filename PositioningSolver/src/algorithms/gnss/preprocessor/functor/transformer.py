@@ -1,4 +1,4 @@
-from PositioningSolver.src.data_types.containers.ObservationData import ObservationData
+from PositioningSolver.src.gnss.data_types.ObservationData import ObservationData
 from . import Functor
 
 

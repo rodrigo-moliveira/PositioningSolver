@@ -1,5 +1,5 @@
 from ...data_types.containers.Container import Container
-from ...data_types.state_space.gnss_state import PositionGNSS
+from PositioningSolver.src.gnss.state_space.gnss_state import PositionGNSS
 
 
 class StateSpace(Container):

@@ -1,10 +1,10 @@
 from math import floor
 
 from ...data_types.basics.Epoch import Epoch
-from ...data_types.gnss.Satellite import SatelliteFactory
+from PositioningSolver.src.gnss.data_types.Satellite import SatelliteFactory
 from ...data_types.basics.DataType import DataTypeFactory
-from ...data_types.containers.ObservationData import ObservationData, Header, ObservationHeader
-from ...data_types.gnss.ServiceManager import ServiceManager
+from PositioningSolver.src.gnss.data_types.ObservationData import ObservationData, Header, ObservationHeader
+from PositioningSolver.src.gnss.data_types.ServiceManager import ServiceManager
 
 from .RinexUtils import RinexUtils
 from ...utils.errors import ConfigError
@@ -114,13 +114,13 @@ class RinexObsReader:
             if "RINEX VERSION / TYPE" in line:
                 self.header.rinex_version = float(line[5:10])
                 if self.header.rinex_version < 3:
-                    from src.utils.errors import FileError
+                    from PositioningSolver.src.utils.errors import FileError
                     raise FileError("The provided rinex file {} is of version {}. Only version 3.00 or "
                                     "higher is supported. Error!".format(self.file, self.header.rinex_version))
 
                 rinexType = line[20]
                 if rinexType != 'O':
-                    from src.utils.errors import FileError
+                    from PositioningSolver.src.utils.errors import FileError
                     raise FileError("Rinex File {} should be a GNSS Observation Data File. Instead, "
                                     "a {} was provided (code {})".format(self.file,
                                                                          RinexUtils.RINEX_FILE_TYPES.get
@@ -197,7 +197,8 @@ class RinexObsReader:
 
                 for service in services:
                     if service not in services_read:
-                        raise ConfigError(f"User-selected service '{service}' does not exist in provided Observation File")
+                        raise ConfigError(f"User-selected service "
+                                          f"'{service}' does not exist in provided Observation File")
 
     def _set_time_system(self, time_system: str):
 
@@ -327,4 +328,3 @@ class RinexObsReader:
 
                         except (ValueError, IndexError) as e:
                             self.log.debug("problem parsing line {} for index {}: {}".format(line, this_index, e))
-

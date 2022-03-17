@@ -1,11 +1,11 @@
 import os
 
-from PositioningSolver.src.data_types.state_space.utils import *
-from PositioningSolver.src.io_manager.import_timeseries.read_tm import read_csv, resample
-from PositioningSolver.src.algorithms.ins.geo_utils import *
+from PositioningSolver.src.io_manager.import_timeseries.read_tm import read_csv, downsample
+from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_all
 
 WORKSPACE = os.path.abspath("../../workspace/datasets/ins_coil_move/")
+
 
 
 def main():
@@ -17,9 +17,7 @@ def main():
     time = read_csv(WORKSPACE+ref_time_file, True, delimiter=",")
     euler = read_csv(WORKSPACE + ref_att_file, True, delimiter=",")
 
-    print(position.shape)
-    position = resample(position, 100)
-    print(position.shape)
+    position = downsample(position, 100)
 
     #lla2ecef(position)
 

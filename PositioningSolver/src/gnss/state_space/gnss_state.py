@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from ...utils.errors import OrbitError, FrameError, FormError
+from PositioningSolver.src.utils.errors import OrbitError, FrameError, FormError
 from .utils import Geodetic2Cartesian, Cartesian2Geodetic, ECEF2ENU, ENU2ECEF
 
 
@@ -11,7 +11,7 @@ def validate_frame(frame):
     Supported frames:
         * ECEF
         * ENU
-    To convert between them, an observer (the gnss receiver) is needed
+    To convert between them, an observer (the data_types receiver) is needed
 
     Args:
         frame (str):
@@ -265,4 +265,3 @@ class PositionGNSS(_StateVector):
 
         self.base.setfield(new_coord, dtype=float)
         self._data["frame"] = new_frame
-

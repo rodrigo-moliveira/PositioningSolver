@@ -1,9 +1,9 @@
 from ...io_manager.import_rinex.RinexUtils import to_float
 from ...data_types.basics.Epoch import Epoch
-from ...data_types.gnss.Satellite import SatelliteFactory
+from PositioningSolver.src.gnss.data_types.Satellite import SatelliteFactory
 
 from .RinexUtils import RinexUtils
-from ...data_types.containers.NavigationData import NavigationPointGPS, NavigationHeader
+from PositioningSolver.src.gnss.data_types.NavigationData import NavigationPointGPS, NavigationHeader
 
 
 """
@@ -84,13 +84,13 @@ class RinexNavReaderGPS:
             if "RINEX VERSION / TYPE" in line:
                 self.nav_header.rinex_version = float(line[5:10])
                 if self.nav_header.rinex_version < 3:
-                    from src.utils.errors import FileError
+                    from PositioningSolver.src.utils.errors import FileError
                     raise FileError("The provided rinex file {} is of version {}. Only version 3.00 or "
                                     "higher is supported. Error!".format(cFile, self.nav_header.rinex_version))
 
                 rinex_type = line[20]
                 if rinex_type != 'N':
-                    from src.utils.errors import FileError
+                    from PositioningSolver.src.utils.errors import FileError
                     raise FileError("Rinex File {} should be a GNSS Navigation Data File. Instead, "
                                     "a {} was provided (code {})".format(cFile,
                                                                          RinexUtils.RINEX_FILE_TYPES.get

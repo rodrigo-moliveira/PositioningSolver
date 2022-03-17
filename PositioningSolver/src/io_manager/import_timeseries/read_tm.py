@@ -62,7 +62,7 @@ def read_csv(filepath, ignore_header=True, delimiter=",", usecols=None, factor=N
     return data
 
 
-def resample(data, rate):
+def downsample(data, rate):
     _old_size, _len = data.shape
 
     _new = []

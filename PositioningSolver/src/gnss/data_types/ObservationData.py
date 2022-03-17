@@ -1,11 +1,11 @@
 from collections import OrderedDict
-from ...data_types.basics.DataType import DataType
-from ...data_types.basics.Epoch import Epoch
-from ...data_types.gnss.Satellite import Satellite
-from .TimeSeries import TimeSeries
-from .Container import Container
-from ...utils.errors import NonExistentObservable, EmptyObservationData
-from ...data_types.gnss.Observation import Observation
+from PositioningSolver.src.data_types.basics.DataType import DataType
+from PositioningSolver.src.data_types.basics.Epoch import Epoch
+from PositioningSolver.src.gnss.data_types.Satellite import Satellite
+from PositioningSolver.src.data_types.containers.TimeSeries import TimeSeries
+from PositioningSolver.src.data_types.containers.Container import Container
+from PositioningSolver.src.utils.errors import NonExistentObservable, EmptyObservationData
+from PositioningSolver.src.gnss.data_types.Observation import Observation
 
 
 class Header(Container):
@@ -52,7 +52,7 @@ class EpochData:
             if observation not in self._data[satellite]:
                 self._data[satellite].append(observation)
             else:
-                from src import get_logger
+                from PositioningSolver.src import get_logger
                 log = get_logger("io_manager")
                 log.warning(f"Trying to set an observable of type {str(observation)} for satellite {str(satellite)},"
                             f"which has already been set. Overwriting not permitted.")
