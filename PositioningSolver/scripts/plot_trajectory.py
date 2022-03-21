@@ -6,7 +6,17 @@ from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_al
 
 WORKSPACE = os.path.abspath("../../workspace/datasets/ins_coil_move/")
 
+from PositioningSolver.src.ins.attitude import *
 
+angles = np.array([2,-0.29, -10])
+
+
+dcm = matrix_ned2body(angles)
+_angles = dcm2euler(dcm)
+
+print(angles)
+print(_angles)
+exit()
 
 def main():
     ref_pos_file = "\\reference\\ref_pos.csv"
@@ -16,7 +26,7 @@ def main():
     position = read_csv(WORKSPACE+ref_pos_file, True, delimiter=",", factor=[Constant.DEG2RAD, Constant.DEG2RAD, 1])
     time = read_csv(WORKSPACE+ref_time_file, True, delimiter=",")
     euler = read_csv(WORKSPACE + ref_att_file, True, delimiter=",")
-
+    # TODO change euler from yaw,pitch,roll to roll,pitch,yaw...
     position = downsample(position, 100)
 
     #lla2ecef(position)

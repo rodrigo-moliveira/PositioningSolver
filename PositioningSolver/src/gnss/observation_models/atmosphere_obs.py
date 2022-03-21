@@ -101,7 +101,7 @@ def ionosphereCorrection(user_lat, user_long, sv_el, sv_az, alfa, beta, GPS_time
 LimLat = (15, 30, 45, 60, 75)
 
 #                   P0(mbar) T0(K)    e0(mbar) beta(K/m)  lambda0
-P_mean = np.array([[1013.25, 299.65,  26.31,   6.30e-3,   2.7],
+P_mean = np.array([[1013.25, 299.65,  26.31,   6.30e-3,   2.77],
                    [1017.25, 294.15,  21.79,   6.05e-3,   3.15],
                    [1015.75, 283.15,  11.66,   5.58e-3,   2.57],
                    [1011.75, 272.15,  6.78,    5.39e-3,   1.81],

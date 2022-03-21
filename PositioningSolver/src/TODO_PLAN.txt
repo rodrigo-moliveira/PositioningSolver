@@ -1,9 +1,3 @@
-math_utils/matrix:
-    - função de conversão skew symmetric <-> angles
-
-/src/ins/attitude
-    Matriz E <-> N (lat, long)
-    Matriz N <-> B (ângulos Euler)  / euler2dcm
 
 /src/ins/mechanization
     vetor w_{en}^n
