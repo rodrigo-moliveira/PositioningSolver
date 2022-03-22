@@ -4,8 +4,6 @@
     vetor w_{ie}^e, vetor w_{ie}^n
     vetor w_{nb}^b(euler dot)
 
-vetor gravidade
-
 Eqs. da dinâmica:
     posicao
     vel

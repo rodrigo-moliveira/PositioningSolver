@@ -69,7 +69,7 @@ def dcm2euler(dcm):
     #     [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
     # where (x,y,z) are (roll,pitch,yaw), s is short for sin and c is short for cos
 
-    yaw = np.arctan2(dcm[0, 1], dcm[0, 0])  # atan2(cy*sz, cy*cz) <=> atan2(sz,cz)
+    yaw = np.arctan2(dcm[0, 1], dcm[0, 0])  # arctan2(cy*sz, cy*cz) <=> arctan2(sz,cz)
     pitch = np.arcsin(-dcm[0, 2])
     roll = np.arctan2(dcm[1, 2], dcm[2, 2])
 

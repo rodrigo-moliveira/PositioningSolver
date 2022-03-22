@@ -1,5 +1,6 @@
 import os
 
+from PositioningSolver.src.ins.gravity import *
 from PositioningSolver.src.io_manager.import_timeseries.read_tm import read_csv, downsample
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_all
@@ -8,14 +9,17 @@ WORKSPACE = os.path.abspath("../../workspace/datasets/ins_coil_move/")
 
 from PositioningSolver.src.ins.attitude import *
 
-angles = np.array([2,-0.29, -10])
+lla = np.array([np.pi/2,-1.5, 1000])
+
+print("gravity 1 is ", geo_param(lla)[2])
+
+pos = np.array(Geodetic2Cartesian(*lla))
+g = acceleration(pos)
 
 
-dcm = matrix_ned2body(angles)
-_angles = dcm2euler(dcm)
-
-print(angles)
-print(_angles)
+m = matrix_ecef2ned(lla[0], lla[1])
+g = m @ g
+print("gravity 2 is", g, " norm is ", np.linalg.norm(g))
 exit()
 
 def main():
