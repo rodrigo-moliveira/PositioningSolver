@@ -3,6 +3,12 @@ import numpy as np
 from PositioningSolver.src.gnss.state_space.utils import Cartesian2Geodetic, Geodetic2Cartesian
 from PositioningSolver.src.math_utils.Constants import Constant
 
+# Constants
+MU = Constant.MU
+FLATTENING = Constant.EARTH_FLATNESS
+a = Constant.EARTH_SEMI_MAJOR_AXIS
+e_sq = Constant.EARTH_ECCENTRICITY_SQ
+
 
 def ecef2lla(data):
     _time, _len = data.shape
@@ -22,15 +28,6 @@ def lla2ecef(data):
         ecef[t, :] = Geodetic2Cartesian(*data[t, :])
 
     return ecef
-
-
-
-MU = Constant.MU
-Re = 6378137                        # m
-FLATTENING = 1/298.257223563        # Earth flattening, f = (a-b)/a
-ECCENTRICITY = 0.0818191908426215   # Earth eccentricy, e2 = 2*f-f^2
-E_SQR = ECCENTRICITY**2             # squared eccentricity
-W_IE = 7292115e-11                  # Earth's rotation rate
 
 
 def geo_param(pos):
@@ -57,11 +54,24 @@ def geo_param(pos):
     cl = np.cos(pos[0])
     sl_sqr = sl * sl
     h = pos[2]
-    rm = (Re*(1 - E_SQR)) / (np.sqrt(1.0 - E_SQR*sl_sqr) * (1.0 - E_SQR*sl_sqr))
-    rn = Re / (np.sqrt(1.0 - E_SQR*sl_sqr))
-    g1 = normal_gravity * (1 + k*sl_sqr) / np.sqrt(1.0 - E_SQR*sl_sqr)
-    g = g1 * (1.0 - (2.0/Re) * (1.0 + FLATTENING + m - 2.0*FLATTENING*sl_sqr)*h + 3.0*h*h/Re/Re)
-    return rm, rn, g, sl, cl, W_IE
+
+    g1 = normal_gravity * (1 + k*sl_sqr) / np.sqrt(1.0 - e_sq*sl_sqr)
+    g = g1 * (1.0 - (2.0/a) * (1.0 + FLATTENING + m - 2.0*FLATTENING*sl_sqr)*h + 3.0*h*h/a/a)
+    return g, sl, cl
+
+
+def get_earth_radii(lat):
+    # Eq. 6 of Sensors 2012, 12 (see paper full name...)
+    # see https://en.wikipedia.org/wiki/Earth_radius section 'Radii of curvature'
+    # Rn -> primer vertical at provided latitude
+    # Rm -> Radius of curvature in the meridian
+
+    sl_sqr = np.sin(lat)**2
+
+    rm = (a * (1 - e_sq)) / (np.sqrt(1.0 - e_sq * sl_sqr) * (1.0 - e_sq * sl_sqr))
+    rn = a / (np.sqrt(1.0 - e_sq * sl_sqr))
+
+    return rm, rn
 
 
 def acceleration(r_eb_e, mode="earth"):

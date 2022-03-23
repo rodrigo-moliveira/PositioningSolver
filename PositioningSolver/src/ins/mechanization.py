@@ -3,22 +3,28 @@
 import numpy as np
 
 from PositioningSolver.src.math_utils.Constants import Constant
+from PositioningSolver.src.ins.gravity import get_earth_radii
 
 w_ie_e = np.array([0, 0, Constant.EARTH_ROTATION])  # in rad/s. This vector is also w_ie_i, although this is not needed
 
 
 # Methods to compute angular velocities between frames e - n - b
-def compute_w_en_n():
-    # see https://en.wikipedia.org/wiki/Earth_radius
-    #rm: meridian     radius, m
-    # rn: normal     radius, m
-    rm_effective = rm + pos_n[2]
-    rn_effective = rn + pos_n[2]
+def compute_w_en_n(v_eb_n, lla):
+    v_n, v_e, v_z = v_eb_n[:]
+    lat, long, h = lla[:]
 
-    w_en_n[0] = vel_n[1] / rn_effective  # wN
-    w_en_n[1] = -vel_n[0] / rm_effective  # wE
-    w_en_n[2] = -vel_n[1] * sl / cl / rn_effective  # wD
-    # NOTA: o meu h é negativo!!!
+    rm, rn = get_earth_radii(lat)
+
+    rm_effective = rm - h
+    rn_effective = rn - h
+
+    w_en_n = np.zeros(3)
+
+    w_en_n[0] = v_e / rn_effective  # wN
+    w_en_n[1] = -v_n / rm_effective  # wE
+    w_en_n[2] = -v_e * np.tan(lat) / rn_effective  # wD
+
+    return w_en_n
 
 
 def compute_w_ie_e():
@@ -32,5 +38,20 @@ def compute_w_ie_n(lat):
                      -np.sin(lat)]) * Constant.EARTH_ROTATION
 
 
-def compute_w_nb_b():
-    pass
+def compute_w_nb_b(euler_dot, euler):
+    # euler angles (phi, theta, psi) = (roll, pitch, yaw)
+
+    phi_dot, theta_dot, psi_dot = euler_dot[:]
+    phi, theta, psi = euler[:]
+
+    sin_phi = np.sin(phi)
+    cos_phi = np.cos(phi)
+    cos_theta = np.cos(theta)
+
+    w_nb_b = np.zeros(3)
+
+    w_nb_b[0] = phi_dot - psi_dot * np.sin(theta)
+    w_nb_b[1] = theta_dot * cos_phi + psi_dot * cos_theta * sin_phi
+    w_nb_b[2] = psi_dot * cos_phi * cos_theta - theta_dot * sin_phi
+
+    return w_nb_b
