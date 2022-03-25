@@ -75,7 +75,9 @@ def plot_3D_trajectory(data_points, **kwargs):
     ax.set_ylabel(kwargs.get("y_label", ""))
     ax.set_zlabel(kwargs.get("z_label", ""))
     ax.set_title(kwargs.get("title", ""))
-    ax.legend()
+
+    if "label" in kwargs:
+        ax.legend()
     return ax
 
 
