@@ -63,8 +63,8 @@ def plot_3D_trajectory(data_points, **kwargs):
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
 
-    ax.scatter([x[0] for x in data_points], [x[1] for x in data_points], [x[2] for x in data_points], marker='o',
-               label=kwargs.get("label", ""))
+    ax.plot([x[0] for x in data_points], [x[1] for x in data_points], [x[2] for x in data_points],
+            label=kwargs.get("label", ""))
     if "true_position" in kwargs:
         true = kwargs.get("true_position")
         ax.scatter(true[0], true[1], true[2], marker='*', label="True State")

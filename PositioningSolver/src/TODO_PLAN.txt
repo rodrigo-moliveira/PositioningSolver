@@ -1,8 +1,17 @@
 
-/src/ins/mechanization
-    vetor w_{en}^n
-    vetor w_{ie}^e, vetor w_{ie}^n
-    vetor w_{nb}^b(euler dot)
+/src/ins/gps
+
+Sensor Emulator:
+    Emulação do IMU
+        * readouts verdadeiros (Eqs. mecanização INS)
+        * adicionar erros
+    Emulação do GPS
+        * obter PVT verdadeiro (escolher referencial / forma : LLA ou ECEF)
+        * adicionar erros (horizontal / vertical)
+
+INS Integration:
+    ...
+    operação inversa
 
 Eqs. da dinâmica:
     posicao

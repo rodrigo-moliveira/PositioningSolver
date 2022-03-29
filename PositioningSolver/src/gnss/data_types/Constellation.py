@@ -51,7 +51,7 @@ class SatelliteSystem(str):
     def get_system_short(self):
         """
         Return:
-            str : "G" for gps and "E" for galileo
+            str : "G" for sensors and "E" for galileo
         """
         return ConstellationToCodeMap.get(self, "UNKNOWN")
 

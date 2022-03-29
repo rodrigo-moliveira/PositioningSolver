@@ -12,6 +12,10 @@ e_sq = Constant.EARTH_ECCENTRICITY_SQ
 
 def ecef2lla(data):
     _time, _len = data.shape
+
+    if _len != 3:
+        raise ValueError(f"Each vector in 'data' should have dimension '3', but instead dim {_len} was provided")
+
     lla = np.zeros((_time, _len))
 
     for t in range(_time):
@@ -22,6 +26,10 @@ def ecef2lla(data):
 
 def lla2ecef(data):
     _time, _len = data.shape
+
+    if _len != 3:
+        raise ValueError(f"Each vector in 'data' should have dimension '3', but instead dim {_len} was provided")
+
     ecef = np.zeros((_time, _len))
 
     for t in range(_time):

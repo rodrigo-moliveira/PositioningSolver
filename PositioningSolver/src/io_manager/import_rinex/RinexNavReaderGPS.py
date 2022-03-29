@@ -119,7 +119,7 @@ class RinexNavReaderGPS:
             * Cuc, e, Cus, sqrtA                                    [Line 3]
             * Toe, Cic, RAAN0, Cis,                                 [Line 4]
             * i0, crc, omega, RAANDot,                              [Line 5]
-            * iDot, codesL2, toe (gps week), flagL2,                [Line 6]
+            * iDot, codesL2, toe (sensors week), flagL2,                [Line 6]
             * SV_URA, SV_health, TGD, IODC                          [Line 7]
             * TransmissionTime (seconds of week)                    [Line 8]
 
@@ -175,7 +175,7 @@ class RinexNavReaderGPS:
                              "hour": hour,
                              "minute": minute,
                              "second": second},
-                            time_system="gps")
+                            time_system="sensors")
                 # set first epoch for this file
                 if not self._first_epoch_set:
                     self._first_epoch = toc

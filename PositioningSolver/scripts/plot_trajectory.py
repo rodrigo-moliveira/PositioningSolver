@@ -1,5 +1,6 @@
 import os
 
+from PositioningSolver.src.ins.gravity import lla2ecef
 from PositioningSolver.src.io_manager.import_timeseries.read_tm import read_csv, downsample
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_all
@@ -13,10 +14,13 @@ def main():
     ref_time_file = "\\time.csv"
 
     # Read Reference PVAT
-    position = read_csv(WORKSPACE+ref_pos_file, True, delimiter=",", factor=[Constant.DEG2RAD, Constant.DEG2RAD, 1])
+    position_lla = read_csv(WORKSPACE+ref_pos_file, True, delimiter=",", factor=[Constant.DEG2RAD, Constant.DEG2RAD, 1])
     time = read_csv(WORKSPACE+ref_time_file, True, delimiter=",")
     # euler = read_csv(WORKSPACE + ref_att_file, True, delimiter=",", factor=[Constant.DEG2RAD, Constant.DEG2RAD, 1],
     #                 function=lambda x: swap_columns(x, 0, 2))
+
+    # transform position lla to cartesian ECEF coordinates
+    position = lla2ecef(position_lla)
 
     period = time[1] - time[0]
     frequency = 1  # output frequency, in Hz

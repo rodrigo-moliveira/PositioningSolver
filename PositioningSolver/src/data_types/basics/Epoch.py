@@ -7,7 +7,7 @@ class Epoch:
     Class Epoch
 
     DISCLAIMER: To simplify this class, I always assume a GPS time system representation, and store the epochs in
-    GPS time and format ´´tuple(gps week number, seconds in week)´´
+    GPS time and format ´´tuple(sensors week number, seconds in week)´´
     In the future I may need a more complex implementation -> either use datetime.datetime directly, astropy.date,
     beyond.Date, or similar...
     """
@@ -23,7 +23,7 @@ class Epoch:
     # immutable objects
     __slots__ = ["week", "seconds"]
 
-    def __init__(self, date, time_system="gps", leap_seconds=0):
+    def __init__(self, date, time_system="sensors", leap_seconds=0):
         """
         Initialize an Epoch object
 
@@ -35,10 +35,10 @@ class Epoch:
                     * string to parse in format '%Y-%m-%d %H:%M:%S', e.g.: '1980-01-06 00:00:00'
                     * dict with keys to construct a datetime object having keys
                             ('year', 'month', 'day', 'hour', 'minute', 'seconds')
-                    * tuple or list (gps week number, seconds in week)
+                    * tuple or list (sensors week number, seconds in week)
 
             time_system (str) :
-                optional. Either 'gps' or 'utc'. If 'utc' time system is chosen,
+                optional. Either 'sensors' or 'utc'. If 'utc' time system is chosen,
                 then leap_seconds must be provided
 
             leap_seconds (int)
@@ -47,7 +47,7 @@ class Epoch:
 
         # check time system
         if time_system.upper() != "GPS" and time_system.upper() != "UTC":
-            raise TypeError(f'unknown time system {repr(time_system)} It must be one of ("gps", "utc")')
+            raise TypeError(f'unknown time system {repr(time_system)} It must be one of ("sensors", "utc")')
 
         # check type of param date
         if isinstance(date, datetime.datetime):
@@ -91,7 +91,7 @@ class Epoch:
 
     def fix_week(self):
         """
-        This method fixes the current gps week, that is, forces self.seconds to be in the right
+        This method fixes the current sensors week, that is, forces self.seconds to be in the right
         interval [0, 604800], and updates self.week accordingly
         """
         if self.seconds > Constant.SECONDS_IN_GPS_WEEK:
@@ -215,7 +215,7 @@ class Epoch:
             if diff_weeks == 0:
                 return self.seconds - other.seconds
             else:
-                # convert other.secs to the current gps week of self
+                # convert other.secs to the current sensors week of self
                 other_secs = other.seconds + diff_weeks * Constant.SECONDS_IN_GPS_WEEK
                 return self.seconds - other_secs
         else:
