@@ -9,8 +9,14 @@ Sensor Emulator:
         * obter PVT verdadeiro (escolher referencial / forma : LLA ou ECEF)
         * adicionar erros (horizontal / vertical)
 
+depois de limpar o SensorEmulator e ter criado uma classe de INSmanagaer
+criar uma funçao de escreve todos os outputs para ficheiros csv (e usar a filosfia de criar uma pasta com a timetag...)
+criar um ficheiro de log...
+
 INS Integration:
     ...
+    primeiro comecar por aplicar as eqs da dinamica sem ruido
+    acrescentar a integracao de biases
     operação inversa
 
 Eqs. da dinâmica:

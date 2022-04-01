@@ -54,10 +54,13 @@ def read_csv(filepath, ignore_header=True, delimiter=",", usecols=None, factor=N
     data = np.genfromtxt(filepath, delimiter=delimiter, skip_header=_ignore, usecols=usecols)
 
     if factor is not None:
-        _time, _len = data.shape
+        _shape = data.shape
 
-        for t in range(_time):
-            data[t, :] *= factor
+        if len(_shape) == 1:
+            data *= factor
+        else:
+            for t in range(_shape[0]):
+                data[t, :] *= factor
 
     # apply user-defined function to data (should modify the provided array object)
     if function is not None:

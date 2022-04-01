@@ -4,6 +4,7 @@ import numpy as np
 
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.ins.gravity import get_earth_radii
+from PositioningSolver.src.math_utils.matrix import vector2skew_symmetric
 
 w_ie_e = np.array([0, 0, Constant.EARTH_ROTATION])  # in rad/s. This vector is also w_ie_i, although this is not needed
 
@@ -55,3 +56,21 @@ def compute_w_nb_b(euler_dot, euler):
     w_nb_b[2] = psi_dot * cos_phi * cos_theta - theta_dot * sin_phi
 
     return w_nb_b
+
+
+###################################
+# N-Frame Mechanization Equations #
+###################################
+
+def compute_w_ib_b(c_nb, w_ie_n, w_en_n, w_nb_b):
+    # Gyro readout
+    return c_nb @ w_ie_n + c_nb @ w_en_n + w_nb_b
+
+
+def compute_f_ib_b(c_nb, c_en, w_en_n, w_ie_n, v_eb_n_dot, g_eb_e, v_eb_n):
+    # accelerometer readout
+    skew_en_n = vector2skew_symmetric(w_en_n)
+    skew_ie_n = vector2skew_symmetric(w_ie_n)
+    f_ib_n = v_eb_n_dot - c_en @ g_eb_e + (skew_en_n + 2 * skew_ie_n) @ v_eb_n
+    f_ib_b = c_nb @ f_ib_n  # accelerometer readout
+    return f_ib_b
