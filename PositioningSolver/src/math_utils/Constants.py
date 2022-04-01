@@ -34,4 +34,3 @@ class Constant:
     EARTH_SEMI_MAJOR_AXIS = 6378137.0  # [m]  Equatorial radius Re
     EARTH_J2 = 1.08262668355315130e-3  # J2 harmonic
     EARTH_MASS = 5.97237e24  # [kg]
-

@@ -3,9 +3,8 @@ import os
 from PositioningSolver.src.algorithms.ins.sensor_emul import imu_emulation
 from PositioningSolver.src.gnss.state_space.utils import Cartesian2Geodetic
 from PositioningSolver.src.ins.attitude import matrix_ecef2ned
-from PositioningSolver.src.ins.gravity import lla2ecef
-from PositioningSolver.src.io_manager.import_timeseries.read_tm import read_csv, swap_columns
-from PositioningSolver.src.math_utils.Constants import Constant
+from PositioningSolver.src.ins.data_mng.unit_conversions import convert_unit
+from PositioningSolver.src.io_manager.import_timeseries import read_csv, swap_columns
 
 
 def main():
@@ -22,16 +21,17 @@ def main():
     # NOTE: my position is positive towards down!!! I do not apply the - correction
     # remember that altitude is positive downwards!
     # in the reference euler, the order is yaw, pitch, roll, but I use roll, pitch, yaw. Swap columns 0 with 2..
-    position_lla = read_csv(WORKSPACE+ref_pos_file, True, delimiter=",", factor=[Constant.DEG2RAD, Constant.DEG2RAD, -1])
+    position_lla = read_csv(WORKSPACE+ref_pos_file, True, delimiter=",")
+    position_lla = convert_unit(position_lla, ("deg", "deg", "height"), ("rad", "rad", "down"))
+
     time = read_csv(WORKSPACE+ref_time_file, True, delimiter=",")
+
     euler = read_csv(WORKSPACE + ref_att_file, True, delimiter=",",
-                     factor=[Constant.DEG2RAD, Constant.DEG2RAD, Constant.DEG2RAD],
                      function=lambda x: swap_columns(x, 0, 2))
+    euler = convert_unit(euler, "deg", "rad")
+
+
     velocity = read_csv(WORKSPACE + ref_vel_file, True, delimiter=",")
-
-
-    # transform position lla to cartesian ECEF coordinates
-    # position = lla2ecef(position_lla)
 
 
     # TODO check if it makes sense to adjust frequency and apply some down sampling
@@ -45,7 +45,9 @@ def main():
     #   forma dos inputs (e.g.: LLA or ECEF, or vel_n, or vel_e)
     #   e converte tudo para a forma standard..
 
-    imu_emulation(time, position_lla, velocity, euler)
+    g,a = imu_emulation(time, position_lla, velocity, euler)
+    # add g e a para o INSMANAGER.. (criar uma data_SIM
+    print(a)
 
 def main2():
     WORKSPACE = os.path.abspath("../../workspace/datasets/ins_double_loop/")

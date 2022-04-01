@@ -54,7 +54,7 @@ def imu_emulation(time, position, velocity_n, attitude):
         g_eb_e = acceleration(r_eb_e)
 
         # 6 - finally, apply the mechanization equations (in the n-frame)
-        w_ib_b = mechanization.compute_w_ib_b(c_nb, w_ie_n, w_en_n, w_nb_b)
-        f_ib_b = mechanization.compute_f_ib_b(c_nb, c_en, w_en_n, w_ie_n, v_eb_n_dot, g_eb_e, v_eb_n)
+        w_ib_b[i] = mechanization.compute_w_ib_b(c_nb, w_ie_n, w_en_n, w_nb_b)
+        f_ib_b[i] = mechanization.compute_f_ib_b(c_nb, c_en, w_en_n, w_ie_n, v_eb_n_dot, g_eb_e, v_eb_n)
 
     return w_ib_b, f_ib_b

@@ -110,3 +110,7 @@ class PreprocessorError(PositioningSolver):
 
 class EmptyObservationData(PositioningSolver):
     pass
+
+
+class UnknownConversion(PositioningSolver):
+    pass
