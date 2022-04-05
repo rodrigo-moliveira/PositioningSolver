@@ -2,26 +2,147 @@ from PositioningSolver.src.data_types.containers.Container import Container
 from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
 
+# ref variables:
+#   time
+#   ref_pos. Reference position in navigation frame n (NED). Form is LLD (latitude, longitude, down)
+#   ref_vel. Reference velocity in navigation frame n. Velocity components in NED
+#   ref_att. Reference attitude (euler angles in zyx rotation). However, we store them in xyz order,
+#           that is roll(x), pitch(y) and yaw(z)
+
+# gps position and velocity are computed in ecef. Position is stored in LLD and velocity in NED components
+
+
 class InsDataManager(Container):
-    __slots__ = ["receiver_position", "receiver_clock", "prefit_residuals",
-                 "postfit_residuals", "DOPs", "estimated_iono",
-                 "sat_info", "raw_obs_data", "processed_obs_data",
-                 "obs_header", "nav_data",
-                 "constellations", "services"]
+    __slots__ = ["time", "ref_pos", "ref_vel", "ref_att",
+                 "ref_gyro", "ref_accel", "gyro", "accel", "gps",
+                 "available"]
 
     def __init__(self):
         super().__init__()
-        self.time = SimulatedData("time", "time", "s", ...)
-        self.receiver_clock = None
-        self.estimated_iono = None
-        self.prefit_residuals = None
-        self.postfit_residuals = None
-        self.DOPs = None
-        self.sat_info = None
-        self.raw_obs_data = None
+
+        ########################
+        # Input PVAT Variables #
+        ########################
+
+        # Reference time
+        self.time = SimulatedData(name="time", description="sample time", units=["s"], legend=["time"])
+
+        # Reference Position
+        self.ref_pos = SimulatedData(name="ref_pos",
+                                     description="true position in the navigation frame (NED), in LLD form",
+                                     units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
+                                     legend=['ref_pos_lat', 'ref_pos_lon', 'ref_pos_down'])
+
+        # Reference Velocity
+        self.ref_vel = SimulatedData(name='ref_vel', description='true velocity in the navigation frame (NED)',
+                                     units=['m/s', 'm/s', 'm/s'],
+                                     legend=['ref_vel_N', 'ref_vel_E', 'ref_vel_D'])
+
+        # Reference Attitude
+        self.ref_att = SimulatedData(name='ref_att', description='true attitude (Euler angles, ZYX convention)',
+                                     units=['rad', 'rad', 'rad'],
+                                     output_units=['deg', 'deg', 'deg'],
+                                     legend=['ref_Roll', 'ref_Pitch', 'ref_Yaw'])
+
+        #######################
+        # Sensor Measurements #
+        #######################
+
+        # True (errorless) gyro readout
+        self.ref_gyro = SimulatedData(name='ref_gyro',
+                                      description='true angular velocity in the body frame (w_ib_b)',
+                                      units=['rad/s', 'rad/s', 'rad/s'],
+                                      output_units=['deg/s', 'deg/s', 'deg/s'],
+                                      legend=['ref_gyro_x', 'ref_gyro_y', 'ref_gyro_z'])
+
+        # True (errorless) accelerometer readout
+        self.ref_accel = SimulatedData(name='ref_accel',
+                                       description='true acceleration in the body frame (f_ib_b)',
+                                       units=['m/s^2', 'm/s^2', 'm/s^2'],
+                                       legend=['ref_accel_x', 'ref_accel_y', 'ref_accel_z'])
+
+        # Real (with error) gyro readout
+        self.gyro = SimulatedData(name='gyro',
+                                  description='gyro measurements w_ib_b',
+                                  units=['rad/s', 'rad/s', 'rad/s'],
+                                  output_units=['deg/s', 'deg/s', 'deg/s'],
+                                  legend=['gyro_x', 'gyro_y', 'gyro_z'])
+
+        # Real (with error) accelerometer readout
+        self.accel = SimulatedData(name='accel',
+                                   description='accelerometer measurements f_ib_b',
+                                   units=['m/s^2', 'm/s^2', 'm/s^2'],
+                                   legend=['accel_x', 'accel_y', 'accel_z'])
+
+        # Real (with error) GPS measurements
+        self.gps = SimulatedData(name='gps',
+                                 description='GPS LLD position and NED velocity measurements',
+                                 units=['rad', 'rad', 'm', 'm/s', 'm/s', 'm/s'],
+                                 output_units=['deg', 'deg', 'm', 'm/s', 'm/s', 'm/s'],
+                                 legend=['gps_lat', 'gps_lon', 'gps_down',
+                                         'gps_vN', 'gps_vE', 'gps_vD'])
+
+        # available data for the current simulation
+        self.available = []
 
     def __str__(self):
-        return f'{type(self).__name__}( DataManager for GNSS algorithms )'
+        return f'{type(self).__name__}( DataManager for INS algorithms )'
 
     def __repr__(self):
         return str(self)
+
+    def add_data(self, data_name, data, units=None):
+        """
+        Add data to available.
+        Args:
+            data_name: data name, str
+            data: a scalar, a numpy array or a dict of the above two. If data is a dict, each
+                value in it should be of same type (scalar or numpy array), same size and same
+                units.
+            units: Units of the data. If you know clearly no units convertion is needed, set
+                units to None. If you do not know what units are used in the class InsDataMgr,
+                you'd better provide the units of the data. Units convertion will be done
+                automatically.
+                If data is a scalar, units should be a list of one string to define its unit.
+                If data is a numpy of size(m,n), units should be a list of n strings
+                to define the units.
+        """
+        if data_name in self.__slots__:
+            sim = getattr(self, data_name, None)
+            if sim is not None:
+                sim.add_data(data, units)
+
+                # add to 'available' list
+                if data_name not in self.available:
+                    self.available.append(data_name)
+        else:
+            raise ValueError(f"Unsupported data: {data_name}, not in {self.__slots__}")
+
+    def get_data(self, data_names):
+        """
+        Get data section of data_names.
+        Args:
+            data_names: a list of data names
+        Returns:
+            data: a list of data corresponding to data_names.
+            If there is any unavailable data in data_names, return None
+        """
+        # single data
+        if isinstance(data_names, str):
+            if data_names in self.available:
+                return getattr(self, data_names).data
+            else:
+                raise ValueError(f'{data_names} is not available.')
+
+        # vector data
+        data = []
+        for i in data_names:
+            if i in self.available:
+                data.append(getattr(self, i).data)
+            else:
+                raise ValueError(f'{i} is not available.')
+        return data
+
+    def save_data(self, directory):
+        pass
+        #iterar nos available e escrever para o ficheiro...

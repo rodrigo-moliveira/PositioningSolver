@@ -3,7 +3,7 @@
 import numpy as np
 
 from PositioningSolver.src.math_utils.Constants import Constant
-from PositioningSolver.src.ins.gravity import get_earth_radii
+from PositioningSolver.src.ins.mechanization.gravity import get_earth_radii
 from PositioningSolver.src.math_utils.matrix import vector2skew_symmetric
 
 w_ie_e = np.array([0, 0, Constant.EARTH_ROTATION])  # in rad/s. This vector is also w_ie_i, although this is not needed

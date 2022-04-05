@@ -1,0 +1,2 @@
+class InsAlgorithm:
+    pass

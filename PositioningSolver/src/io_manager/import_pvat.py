@@ -2,6 +2,7 @@ import numpy as np
 
 
 def import_pvat():
+    # get user options, datamanager and input PVAT files
     pass
 
 

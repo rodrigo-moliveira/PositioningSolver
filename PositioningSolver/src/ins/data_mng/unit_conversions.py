@@ -56,10 +56,6 @@ def unit_conversion_scale(src_unit, out_unit):
         elif src_unit[i] == 'rad/s' and out_unit[i] == 'deg/hr':
             scale[i] = 3600.0 / Constant.DEG2RAD
 
-        # height to down or down to height
-        elif (src_unit[i] == 'height' and out_unit[i] == 'down') or (src_unit[i] == 'down' and out_unit[i] == 'heigth'):
-            scale[i] = -1.0
-
         else:
             if src_unit[i] != out_unit[i]:
                 from PositioningSolver.src.utils.errors import UnknownConversion

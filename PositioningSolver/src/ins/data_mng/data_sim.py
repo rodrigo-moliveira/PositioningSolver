@@ -69,6 +69,7 @@ class SimulatedData:
                 if units != self.units:
                     # data units are different from units in the manager, need to be converted
                     # TODO: log message...
+                    print(f"converting {self.name} from {units} to {self.units}")
                     data = convert_unit(data, units, self.units)
             else:
                 raise ValueError(f'Units {units} and {self.units} are of different lengths. Error')

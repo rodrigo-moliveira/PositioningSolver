@@ -1,6 +1,6 @@
 import os
 
-from PositioningSolver.src.ins.gravity import lla2ecef
+from PositioningSolver.src.ins.mechanization.gravity import lla2ecef
 from PositioningSolver.src.io_manager.import_timeseries import read_csv, downsample
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_all

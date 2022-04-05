@@ -10,9 +10,9 @@ EARTH_A = Constant.EARTH_SEMI_MAJOR_AXIS
 e_sq = Constant.EARTH_ECCENTRICITY_SQ
 
 
-# NOTE: In this project, lla refers to the true NED frame, that is, altitude is positive downwards!
+# NOTE: In this project, lld refers to the true NED frame, that is, altitude is positive downwards!
 # so we have to multiply it with -1 in order to call the standard ECEF2GEODETIC / GEODETIC2ECEF functions
-def ecef2lla(data):
+def ecef2lld(data):
     _shape = data.shape
 
     # check if it is single input, or batch, and verify dimension
@@ -31,16 +31,39 @@ def ecef2lla(data):
         tmp[2] *= -1
         return tmp
 
-    lla = np.zeros(_shape)
+    lld = np.zeros(_shape)
 
     for t in range(_shape[0]):
-        lla[t, :] = Cartesian2Geodetic(*data[t, :])
-        lla[t, 2] *= -1  # altitude is positive downwards, hence the minus sign
+        lld[t, :] = Cartesian2Geodetic(*data[t, :])
+        lld[t, 2] *= -1  # altitude is positive downwards, hence the minus sign
 
-    return lla
+    return lld
 
 
-def lla2ecef(data):
+def lla2lld(data):
+    _shape = data.shape
+
+    # check if it is single input, or batch, and verify dimension
+    if len(_shape) == 1:
+        is_batch = False
+        if _shape[0] != 3:
+            raise ValueError(f"The provided vector should have dimension '3', but instead dim {_shape} was provided")
+    else:
+        is_batch = True
+        if _shape[1] != 3:
+            raise ValueError(f"Each vector in 'data' should have dimension '3', but instead dim {_shape[1]} was "
+                             f"provided")
+
+    lld = data.copy()
+    if not is_batch:
+        lld[2] *= -1
+    else:
+        lld[:, 2] *= -1
+
+    return lld
+
+
+def lld2ecef(data):
     _shape = data.shape
 
     # check if it is single input, or batch, and verify dimension
