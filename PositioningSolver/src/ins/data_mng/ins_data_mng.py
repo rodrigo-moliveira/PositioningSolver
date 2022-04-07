@@ -15,7 +15,7 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 class InsDataManager(Container):
     __slots__ = ["time", "ref_pos", "ref_vel", "ref_att",
                  "ref_gyro", "ref_accel", "gyro", "accel", "gps",
-                 "available"]
+                 "_available", "_do_not_save"]
 
     def __init__(self):
         super().__init__()
@@ -83,7 +83,10 @@ class InsDataManager(Container):
                                          'gps_vN', 'gps_vE', 'gps_vD'])
 
         # available data for the current simulation
-        self.available = []
+        self._available = []
+
+        # SimulatedData which is not intended to be saved
+        self._do_not_save = []  # TODO after code is validated, put the reference PVAT here
 
     def __str__(self):
         return f'{type(self).__name__}( DataManager for INS algorithms )'
@@ -113,8 +116,8 @@ class InsDataManager(Container):
                 sim.add_data(data, units)
 
                 # add to 'available' list
-                if data_name not in self.available:
-                    self.available.append(data_name)
+                if data_name not in self._available:
+                    self._available.append(data_name)
         else:
             raise ValueError(f"Unsupported data: {data_name}, not in {self.__slots__}")
 
@@ -129,7 +132,7 @@ class InsDataManager(Container):
         """
         # single data
         if isinstance(data_names, str):
-            if data_names in self.available:
+            if data_names in self._available:
                 return getattr(self, data_names).data
             else:
                 raise ValueError(f'{data_names} is not available.')
@@ -137,12 +140,19 @@ class InsDataManager(Container):
         # vector data
         data = []
         for i in data_names:
-            if i in self.available:
+            if i in self._available:
                 data.append(getattr(self, i).data)
             else:
                 raise ValueError(f'{i} is not available.')
         return data
 
     def save_data(self, directory):
-        pass
-        #iterar nos available e escrever para o ficheiro...
+        for sim_data in self._available:
+            if sim_data not in self._do_not_save:
+
+                # fetch sim_data
+                sim = getattr(self, sim_data, None)
+
+                if sim is not None:
+                    # print("saving", sim_data)
+                    sim.save_to_file(directory)

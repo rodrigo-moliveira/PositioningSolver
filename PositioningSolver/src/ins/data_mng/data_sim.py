@@ -60,18 +60,76 @@ class SimulatedData:
                 If data is a scalar, units should be a list of one string to define its unit.
                 If data is a numpy of size(m,n), units should be a list of n strings
                 to define the units.
-                If data is a dict, units should be the same as the above two depending on if
-                each value in the dict is a scalr or a numpy array.
         """
         if units is not None:
             units = list(units)
             if len(units) == len(self.units):
                 if units != self.units:
                     # data units are different from units in the manager, need to be converted
-                    # TODO: log message...
                     print(f"converting {self.name} from {units} to {self.units}")
                     data = convert_unit(data, units, self.units)
             else:
                 raise ValueError(f'Units {units} and {self.units} are of different lengths. Error')
 
         self.data = data
+
+    def __str__(self):
+        return self.name
+
+    def save_to_file(self, directory):
+        print(f"saving {self.name} to file")
+        # TODO: log message...
+        f = open(directory+f"\\{self.name}.csv", "w")
+
+        # Write Header
+        f.write(f"{self._header_to_file()}\n")
+
+        # Write Data
+        _data = self._data_to_file()
+        for line in _data:
+            f.write(f"{line}\n")
+        f.close()
+
+    def _header_to_file(self):
+        # check dimension _dim of vector
+        try:
+            _len, _dim = self.data.shape
+        except:
+            # scalar dimension
+            _dim = 1
+            _len = len(self.data)
+
+        header = ""
+        for i in range(_dim):
+            header += f"{self.legend[i]}[{self.output_units[i]}]" + ","
+
+        # remove trailing ','
+        header = header[0:-1]
+
+        return header
+
+    def _data_to_file(self):
+        # NOTE: I'm currently assuming that it's always np.array
+
+        data_converted = convert_unit(self.data, self.units, self.output_units)
+
+        # check dimension _dim of vector
+        try:
+            _len, _dim = data_converted.shape
+        except:
+            # scalar dimension
+            _dim = 1
+            _len = len(data_converted)
+
+        _data = []
+
+        for i in range(_len):
+            line = ""
+            for j in range(_dim):
+                line += str(data_converted[i, j]) + ","
+
+            # remove trailing ','
+            line = line[0:-1]
+            _data.append(line)
+
+        return _data

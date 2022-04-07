@@ -16,8 +16,9 @@ from PositioningSolver.src.io_manager.import_pvat import read_csv
 
 class InsAlgorithmManager:
 
-    def __init__(self):
+    def __init__(self, algorithm):
         self.data_manager = InsDataManager()
+        self.algorithm = algorithm
 
     def read_input_data(self, time_dict, position_dict, velocity_dict, attitude_dict):
 
@@ -96,16 +97,31 @@ class InsAlgorithmManager:
             velocity = convert_unit(velocity, velocity_dict.get("units"), ("m/s", "m/s", "m/s"))
         self.data_manager.add_data("ref_vel", velocity, ("m/s", "m/s", "m/s"))
 
+    def run(self):
+
+        # fetch input variables to this algorithm
+        input_names = self.algorithm.inputs
+        inputs = []
+
+        for _in_name in input_names:
+            _in = self.data_manager.get_data(_in_name)
+            inputs.append(_in)
+
+        self.algorithm.compute(*inputs)
+
+        # get results and add them to the data manager
+        _results = self.algorithm.get_results()
+        for _data, _name in zip(_results, self.algorithm.outputs):
+            if _data is not None:
+                self.data_manager.add_data(_name, _data)
+
+
     def results(self, data_dir=None):
         #### check data dir
         data_saved = []
         if data_dir is not None:  # data_dir specified, meaning to save .csv files
-            print("checking dir")
             data_dir = self._check_data_dir(data_dir)
 
-            f = open(data_dir+"\\test.txt", "w")
-            f.write("test")
-            f.close()
             # save data files
             self.data_manager.save_data(data_dir)
 

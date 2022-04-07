@@ -10,14 +10,14 @@ w_ie_e = np.array([0, 0, Constant.EARTH_ROTATION])  # in rad/s. This vector is a
 
 
 # Methods to compute angular velocities between frames e - n - b
-def compute_w_en_n(v_eb_n, lla):
+def compute_w_en_n(v_eb_n, lld):
     v_n, v_e, v_z = v_eb_n[:]
-    lat, long, h = lla[:]
+    lat, long, d = lld[:]
 
     rm, rn = get_earth_radii(lat)
 
-    rm_effective = rm - h
-    rn_effective = rn - h
+    rm_effective = rm - d
+    rn_effective = rn - d
 
     w_en_n = np.zeros(3)
 

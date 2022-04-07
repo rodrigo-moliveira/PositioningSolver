@@ -1,17 +1,18 @@
 
-/src/ins/gps
+software:
+    retirar a primeira linha dos outputs
+    adicionar o tempo, colocar o tempo nas variaveis a nao imprimir
+    criar um ficheiro de log
+
+criar as classes de IMU e GPS com os valores dos erros
 
 Sensor Emulator:
     Emulação do IMU
-        * readouts verdadeiros (Eqs. mecanização INS)
         * adicionar erros
     Emulação do GPS
         * obter PVT verdadeiro (escolher referencial / forma : LLA ou ECEF)
         * adicionar erros (horizontal / vertical)
 
-depois de limpar o SensorEmulator e ter criado uma classe de INSmanagaer
-criar uma funçao de escreve todos os outputs para ficheiros csv (e usar a filosfia de criar uma pasta com a timetag...)
-criar um ficheiro de log...
 
 INS Integration:
     ...

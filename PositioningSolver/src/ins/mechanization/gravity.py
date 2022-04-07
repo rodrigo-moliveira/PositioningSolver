@@ -133,7 +133,7 @@ def get_earth_radii(lat):
     return rm, rn
 
 
-def acceleration(r_eb_e, mode="earth"):
+def grav_acceleration(r_eb_e, mode="earth"):
     """
     compute acceleration due to zonal harmonics.
     The harmonics coded are the low-order ones (the equations are hard-coded) and
