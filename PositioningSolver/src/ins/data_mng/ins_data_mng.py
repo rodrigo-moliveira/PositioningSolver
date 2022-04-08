@@ -53,26 +53,30 @@ class InsDataManager(Container):
                                       description='true angular velocity in the body frame (w_ib_b)',
                                       units=['rad/s', 'rad/s', 'rad/s'],
                                       output_units=['deg/s', 'deg/s', 'deg/s'],
-                                      legend=['ref_gyro_x', 'ref_gyro_y', 'ref_gyro_z'])
+                                      legend=['ref_gyro_x', 'ref_gyro_y', 'ref_gyro_z'],
+                                      ignore_first_row=True)
 
         # True (errorless) accelerometer readout
         self.ref_accel = SimulatedData(name='ref_accel',
                                        description='true acceleration in the body frame (f_ib_b)',
                                        units=['m/s^2', 'm/s^2', 'm/s^2'],
-                                       legend=['ref_accel_x', 'ref_accel_y', 'ref_accel_z'])
+                                       legend=['ref_accel_x', 'ref_accel_y', 'ref_accel_z'],
+                                       ignore_first_row=True)
 
         # Real (with error) gyro readout
         self.gyro = SimulatedData(name='gyro',
                                   description='gyro measurements w_ib_b',
                                   units=['rad/s', 'rad/s', 'rad/s'],
                                   output_units=['deg/s', 'deg/s', 'deg/s'],
-                                  legend=['gyro_x', 'gyro_y', 'gyro_z'])
+                                  legend=['gyro_x', 'gyro_y', 'gyro_z'],
+                                  ignore_first_row=True)
 
         # Real (with error) accelerometer readout
         self.accel = SimulatedData(name='accel',
                                    description='accelerometer measurements f_ib_b',
                                    units=['m/s^2', 'm/s^2', 'm/s^2'],
-                                   legend=['accel_x', 'accel_y', 'accel_z'])
+                                   legend=['accel_x', 'accel_y', 'accel_z'],
+                                   ignore_first_row=True)
 
         # Real (with error) GPS measurements
         self.gps = SimulatedData(name='gps',
@@ -80,13 +84,14 @@ class InsDataManager(Container):
                                  units=['rad', 'rad', 'm', 'm/s', 'm/s', 'm/s'],
                                  output_units=['deg', 'deg', 'm', 'm/s', 'm/s', 'm/s'],
                                  legend=['gps_lat', 'gps_lon', 'gps_down',
-                                         'gps_vN', 'gps_vE', 'gps_vD'])
+                                         'gps_vN', 'gps_vE', 'gps_vD'],
+                                 ignore_first_row=True)
 
         # available data for the current simulation
         self._available = []
 
         # SimulatedData which is not intended to be saved
-        self._do_not_save = []  # TODO after code is validated, put the reference PVAT here
+        self._do_not_save = ["time"]  # TODO after code is validated, put the reference PVAT here
 
     def __str__(self):
         return f'{type(self).__name__}( DataManager for INS algorithms )'
@@ -155,4 +160,4 @@ class InsDataManager(Container):
 
                 if sim is not None:
                     # print("saving", sim_data)
-                    sim.save_to_file(directory)
+                    sim.save_to_file(directory, self.time)

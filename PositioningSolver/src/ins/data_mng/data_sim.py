@@ -5,7 +5,7 @@ class SimulatedData:
     """
     Simulated data
     """
-    def __init__(self, name, description, units=None, output_units=None, legend=None):
+    def __init__(self, name, description, units=None, output_units=None, legend=None, ignore_first_row=False):
         """
         Set up data properties (input/output data). All data are stored in a TimeSeries, numpy array, scalar: self.data.
         * In case of numpy array, it is of shape (m,n)
@@ -24,6 +24,9 @@ class SimulatedData:
             legend: tuple or list of strings to specify legend of data
                 To be stored in the first line of output csv files
                 The length of units is the same as columns of each set of data in self.data.
+            ignore_first_row: whether or not to ignore the first row (first epoch) of the data matrix.
+                This is used to ignore the data used for initialization purposes
+                (for example, when computing gyro readouts)
         """
         self.name = name
         self.description = description
@@ -47,6 +50,7 @@ class SimulatedData:
         self.legend = legend
 
         self.data = None
+        self.ignore_first_row = ignore_first_row
 
     def add_data(self, data, units=None):
         """
@@ -76,21 +80,28 @@ class SimulatedData:
     def __str__(self):
         return self.name
 
-    def save_to_file(self, directory):
+    def save_to_file(self, directory, time_obj=None):
         print(f"saving {self.name} to file")
         # TODO: log message...
         f = open(directory+f"\\{self.name}.csv", "w")
 
+        time_data = None
+        time_header = None
+
+        if time_obj is not None:
+            time_data = time_obj.data
+            time_header = f"{time_obj.legend[0]}[{time_obj.units[0]}]"
+
         # Write Header
-        f.write(f"{self._header_to_file()}\n")
+        f.write(f"{self._header_to_file(time_str=time_header)}\n")
 
         # Write Data
-        _data = self._data_to_file()
+        _data = self._data_to_file(time_data)
         for line in _data:
             f.write(f"{line}\n")
         f.close()
 
-    def _header_to_file(self):
+    def _header_to_file(self, time_str=None):
         # check dimension _dim of vector
         try:
             _len, _dim = self.data.shape
@@ -100,6 +111,10 @@ class SimulatedData:
             _len = len(self.data)
 
         header = ""
+
+        if time_str is not None:
+            header += str(time_str)+","
+
         for i in range(_dim):
             header += f"{self.legend[i]}[{self.output_units[i]}]" + ","
 
@@ -108,7 +123,7 @@ class SimulatedData:
 
         return header
 
-    def _data_to_file(self):
+    def _data_to_file(self, time_arr=None):
         # NOTE: I'm currently assuming that it's always np.array
 
         data_converted = convert_unit(self.data, self.units, self.output_units)
@@ -123,8 +138,15 @@ class SimulatedData:
 
         _data = []
 
-        for i in range(_len):
+        # whether or not to ignore the first row (epoch) of data
+        _start = 0 if self.ignore_first_row is False else 1
+
+        for i in range(_start, _len):
             line = ""
+
+            if time_arr is not None:
+                line += f"{time_arr[i,0]}" + ","
+
             for j in range(_dim):
                 line += str(data_converted[i, j]) + ","
 
