@@ -31,6 +31,8 @@ class SensorEmulationAlg(InsAlgorithm):
         true_gyro, true_accel = self._compute_true_imu_readouts(time, pos_lld, vel_eb_n, euler_att)
 
         # compute error readouts
+
+        # add to outputs
         self.results.append(None)
         self.results.append(None)
 

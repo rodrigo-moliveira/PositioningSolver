@@ -1,7 +1,5 @@
 
 software:
-    retirar a primeira linha dos outputs
-    adicionar o tempo, colocar o tempo nas variaveis a nao imprimir
     criar um ficheiro de log
 
 criar as classes de IMU e GPS com os valores dos erros
