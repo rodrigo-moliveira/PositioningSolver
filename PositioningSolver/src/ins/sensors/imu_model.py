@@ -25,6 +25,8 @@ Definir o sensors model:
 class IMU:
 
     def __init__(self, accuracy):
+        # pode ser a string 'mid-end', 'high-end', e isso vai automaticamente buscar o ficheiro certo (com um mapa)
+        # ou entao o utilizador dá o caminho do ficheiro que quer..
 
         if isinstance(accuracy, str):
             pass
@@ -34,3 +36,6 @@ class IMU:
 
         else:
             raise AttributeError(f"Provided 'accuracy' argument is not valid. Must be either 'string' or 'dict'")
+
+        # call function to read and validate the file
+        # then, after it is validated, put the info here, in the appropriate units after conversion..

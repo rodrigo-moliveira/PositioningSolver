@@ -15,6 +15,7 @@
         "std": [5000, 5000, 5000]
       },
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [5000, 5000, 5000]
       }
     },
@@ -32,6 +33,7 @@
         "std": [5000, 5000, 5000]
       },
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [5000, 5000, 5000]
       }
     },
@@ -40,6 +42,7 @@
       "select_model": "random_constant",
       "info": "In field 'select_model' select 'constant' or 'random_constant'",
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [0.00098, 0.00098, 0.00098]
       },
       "random_constant": {
@@ -53,7 +56,6 @@
       "info": "In field 'select_model' select 'gauss_markov' (only model available)",
       "gauss_markov": {
         "units": "Prn is the sigma value of the continuous-time Gauss Markov (GM) Process, in [ppm]. Tau is the GM time constant in [sec], if null, then resorts to Random Walk",
-        "units2": "Tau is the GM time constant in [sec]. If null, then resorts to Random Walk",
         "Prn": [5000, 5000, 5000],
         "Tau": [null, null, null]
       }
@@ -83,6 +85,7 @@
         "std": [5000, 5000, 5000]
       },
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [5000, 5000, 5000]
       }
     },
@@ -100,6 +103,7 @@
         "std": [5000, 5000, 5000]
       },
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [5000, 5000, 5000]
       }
     },
@@ -108,6 +112,7 @@
       "select_model": "random_constant",
       "info": "In field 'select_model' select 'constant' or 'random_constant'",
       "constant": {
+        "units": "val is the value of the constant bias of the process, in [ppm]",
         "val": [0.00098, 0.00098, 0.00098]
       },
       "random_constant": {
@@ -121,7 +126,6 @@
       "info": "In field 'select_model' select 'gauss_markov' (only model available)",
       "gauss_markov": {
         "units": "Prn is the sigma value of the continuous-time Gauss Markov (GM) Process, in [ppm]. Tau is the GM time constant in [sec], if null, then resorts to Random Walk",
-        "units2": "Tau is the GM time constant in [sec]. If null, then resorts to Random Walk",
         "Prn": [5000, 5000, 5000],
         "Tau": [null, null, null]
       }
