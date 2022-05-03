@@ -20,22 +20,58 @@ Definir o sensors model:
 
 
 """
+import os
 
+from PositioningSolver.src.io_manager.import_imu import read_imu_file
+
+SENSOR_PATH_MAP = {
+    "low-end": os.path.abspath("../../PositioningSolver/inputs/sensors/low-end/imu.json"),
+    "mid-end": os.path.abspath("../../PositioningSolver/inputs/sensors/mid-end/imu.json"),
+    "high-end": os.path.abspath("../../PositioningSolver/inputs/sensors/high-end/imu.json")
+}
+
+class _Process:
+    def __init__(self):
+        self.process = None
+        self.stats = None
+
+    def set(self, process, stats):
+        self.process = process
+        self.stats = stats
 
 class IMU:
 
     def __init__(self, accuracy):
-        # pode ser a string 'mid-end', 'high-end', e isso vai automaticamente buscar o ficheiro certo (com um mapa)
-        # ou entao o utilizador dá o caminho do ficheiro que quer..
+
+        # initialize data dict
+        self._data = {
+            "gyro": {
+                "misalignment": _Process(),
+                "scale_factor": _Process(),
+                "bias_constant": _Process(),
+                "bias_drift": _Process(),
+                "observation_noise": _Process()
+            },
+            "accel": {
+                "misalignment": _Process(),
+                "scale_factor": _Process(),
+                "bias_constant": _Process(),
+                "bias_drift": _Process(),
+                "observation_noise": _Process()
+            }
+        }
 
         if isinstance(accuracy, str):
-            pass
+            if accuracy in SENSOR_PATH_MAP.keys():
+                path = SENSOR_PATH_MAP[accuracy]
+            else:
+                path = accuracy
 
-        elif isinstance(accuracy, dict):
-            pass
-
+            # read imu file
+            read_imu_file(path, self)
         else:
-            raise AttributeError(f"Provided 'accuracy' argument is not valid. Must be either 'string' or 'dict'")
+            raise AttributeError(f"Provided 'accuracy' argument is not valid. Must be a string 'low-end', 'mid-end', "
+                                 f" 'high-end', or, alternatively, a path to a valid imu json file")
 
-        # call function to read and validate the file
-        # then, after it is validated, put the info here, in the appropriate units after conversion..
+    def set(self, sensor, process, stats):
+        self._data[sensor][process].set(process, stats)

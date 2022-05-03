@@ -24,17 +24,15 @@ def _validate_bias_drift():
 def _validate_obs_noise():
     return True
 
-def read_imu_file(imu_object):
-    file = "C:\\Users\\rooo\\Documents\\worspace\\meus\\PositioningSolver\\PositioningSolver\\inputs\\sensors\\imu.json"
-
+def read_imu_file(path, imu):
 
     # Opening JSON file
-    with open(file) as json_file:
+    with open(path) as json_file:
         json_dict = json.load(json_file)
 
-        # validate file
+        # TODO add file validation
 
-        print(json_dict["accelerometer"])
-
-
-read_imu_file(None)
+        process = json_dict["accelerometer"]["misalignment"]["select_model"]
+        # TODO fazer funcao que recebe o processo e sabe quais sao os parametros a elr e retorna os stats...
+        stats = None
+        imu.set("accelerometer", process, None)

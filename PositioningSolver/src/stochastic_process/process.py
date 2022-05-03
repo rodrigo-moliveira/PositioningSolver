@@ -17,5 +17,5 @@ class StochasticProcessGen:
     def axes(self):
         return self._axis
 
-    def compute(self):
+    def compute(self, *args):
         return np.zeros((self._dim, self._axis))

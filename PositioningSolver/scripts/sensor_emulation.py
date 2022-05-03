@@ -1,6 +1,7 @@
 import os
 
 from PositioningSolver.src.ins.ins_alg_manager import InsAlgorithmManager
+from PositioningSolver.src.ins.sensors.imu_model import IMU
 from PositioningSolver.src.io_manager.import_pvat import swap_columns
 from PositioningSolver.src.algorithms.ins.sensor_emul import SensorEmulationAlg
 
@@ -14,6 +15,9 @@ def main():
 
     # create algorithm object
     alg = SensorEmulationAlg()
+
+    imu = IMU("low-end")
+    exit()
 
     ins_mng = InsAlgorithmManager(alg)
 
