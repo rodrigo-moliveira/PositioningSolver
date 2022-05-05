@@ -7,17 +7,18 @@ from PositioningSolver.src.algorithms.ins.sensor_emul import SensorEmulationAlg
 
 
 def main():
+    # TODO- we will need a json configuration file with these inputs...
     WORKSPACE = os.path.abspath("../../workspace/datasets/ins_coil_move/")
     ref_pos_file = "\\reference\\ref_pos.csv"
     ref_att_file = "\\reference\\ref_att_euler.csv"
     ref_time_file = "\\time.csv"
     ref_vel_file = "\\reference\\ref_vel.csv"
+    imu_str = "low-end"
 
     # create algorithm object
     alg = SensorEmulationAlg()
 
-    imu = IMU("low-end")
-    exit()
+    imu = IMU(imu_str)
 
     ins_mng = InsAlgorithmManager(alg)
 

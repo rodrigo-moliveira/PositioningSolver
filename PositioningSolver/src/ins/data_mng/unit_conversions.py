@@ -47,6 +47,8 @@ def unit_conversion_scale(src_unit, out_unit):
             scale[i] = Constant.DEG2RAD
         elif src_unit[i] == 'deg/hr' and out_unit[i] == 'rad/s':
             scale[i] = Constant.DEG2RAD / 3600.0
+        elif src_unit[i] == 'deg/sqrt(hr)' and out_unit[i] == 'rad/sqrt(s)':
+            scale[i] = Constant.DEG2RAD / 60.0
 
         # rad to deg
         elif src_unit[i] == 'rad' and out_unit[i] == 'deg':
@@ -56,6 +58,18 @@ def unit_conversion_scale(src_unit, out_unit):
         elif src_unit[i] == 'rad/s' and out_unit[i] == 'deg/hr':
             scale[i] = 3600.0 / Constant.DEG2RAD
 
+        # g to m/s^2
+        elif src_unit[i] == 'g' and out_unit[i] == 'm/s^2':
+            scale[i] = Constant.EARTH_G0
+        elif src_unit[i] == 'mg' and out_unit[i] == 'm/s^2':
+            scale[i] = 1E-3 * Constant.EARTH_G0
+        elif src_unit[i] == 'm/s/sqrt(hr)' and out_unit[i] == 'm/s/sqrt(s)':
+            scale[i] = 1 / 60
+
+        elif src_unit[i] == 'ppm' and out_unit[i] == '':
+            scale[i] = 1E-6
+
+        # Unknown convertion!
         else:
             if src_unit[i] != out_unit[i]:
                 from PositioningSolver.src.utils.errors import UnknownConversion

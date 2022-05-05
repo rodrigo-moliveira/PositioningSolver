@@ -30,6 +30,7 @@ SENSOR_PATH_MAP = {
     "high-end": os.path.abspath("../../PositioningSolver/inputs/sensors/high-end/imu.json")
 }
 
+
 class _Process:
     def __init__(self):
         self.process = None
@@ -39,20 +40,27 @@ class _Process:
         self.process = process
         self.stats = stats
 
+    def __str__(self):
+        return f"Process({self.process}, stats={self.stats})"
+
+    def __repr__(self):
+        return str(self)
+
+
 class IMU:
 
     def __init__(self, accuracy):
 
         # initialize data dict
         self._data = {
-            "gyro": {
+            "gyroscope": {
                 "misalignment": _Process(),
                 "scale_factor": _Process(),
                 "bias_constant": _Process(),
                 "bias_drift": _Process(),
                 "observation_noise": _Process()
             },
-            "accel": {
+            "accelerometer": {
                 "misalignment": _Process(),
                 "scale_factor": _Process(),
                 "bias_constant": _Process(),
@@ -67,11 +75,14 @@ class IMU:
             else:
                 path = accuracy
 
-            # read imu file
+            # read imu file (may raise exceptions)
             read_imu_file(path, self)
         else:
             raise AttributeError(f"Provided 'accuracy' argument is not valid. Must be a string 'low-end', 'mid-end', "
                                  f" 'high-end', or, alternatively, a path to a valid imu json file")
 
-    def set(self, sensor, process, stats):
-        self._data[sensor][process].set(process, stats)
+    def set(self, sensor, model, process, stats):
+        self._data[sensor][model].set(process, stats)
+
+    def __str__(self):
+        return f"IMU[{str(self._data)}]"

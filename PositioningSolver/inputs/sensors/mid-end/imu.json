@@ -62,7 +62,7 @@
     "observation_noise": {
       "white_noise": {
         "comment": "std is the continuous-time standard deviation of the white-noise process, in [m/s/sqrt(hr)]",
-        "std": 0.01
+        "std": [0.01, 0.01, 0.01]
       }
     }
   },
@@ -127,7 +127,7 @@
     "observation_noise": {
       "white_noise": {
         "comment": "std is the continuous-time standard deviation of the white-noise process, in [deg/sqrt(hr)]",
-        "std": 0.03
+        "std": [0.03, 0.03, 0.03]
       }
     }
   }
