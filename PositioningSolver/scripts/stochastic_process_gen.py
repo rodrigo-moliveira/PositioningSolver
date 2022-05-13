@@ -67,11 +67,11 @@ def plots(name, axes, trajectory, psd, allan_var):
     grid()
 
 
-def analyze_process(time, gen: StochasticProcessGen):
+def analyze_process(time, gen: StochasticProcessGen, sampling_time):
     axes = gen.axes
 
     # process series
-    process = gen.compute()
+    process = gen.compute(sampling_time)
 
     # power spectral density
     power, f = power_spectral_density(process, fs)
@@ -96,24 +96,24 @@ def main():
 
     # Gauss Markov generator
     if b_gm:
-        gauss_markov_gen = GaussMarkov(dim=len(time), std=sigma_gm, axis=len(sigma_gm), sampling_time=1 / fs,
+        gauss_markov_gen = GaussMarkov(dim=len(time), std=sigma_gm, axis=len(sigma_gm),
                                        correlation_time=tau_gm)
-        analyze_process(time, gauss_markov_gen)
+        analyze_process(time, gauss_markov_gen, 1/fs)
 
     # Random Walk generator
     if b_rw:
         random_walk_gen = RandomWalk(dim=len(time), std=sigma_rw, axis=len(sigma_rw))
-        analyze_process(time, random_walk_gen)
+        analyze_process(time, random_walk_gen, 1/fs)
 
     # White Noise generator
     if b_wh:
         white_noise_gen = WhiteNoise(dim=len(time), std=sigma_wn, axis=len(sigma_wn))
-        analyze_process(time, white_noise_gen)
+        analyze_process(time, white_noise_gen, 1/fs)
 
     # Random Constant generator
     if b_rc:
         random_constant_gen = RandomConstant(dim=len(time), std=sigma_rc, axis=len(sigma_rc))
-        analyze_process(time, random_constant_gen)
+        analyze_process(time, random_constant_gen, 1/fs)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import os
 
 from PositioningSolver.src.ins.ins_alg_manager import InsAlgorithmManager
+from PositioningSolver.src.ins.sensors.gps_model import GPS
 from PositioningSolver.src.ins.sensors.imu_model import IMU
 from PositioningSolver.src.io_manager.import_pvat import swap_columns
 from PositioningSolver.src.algorithms.ins.sensor_emul import SensorEmulationAlg
@@ -14,13 +15,15 @@ def main():
     ref_time_file = "\\time.csv"
     ref_vel_file = "\\reference\\ref_vel.csv"
     imu_str = "low-end"
+    gps_str = "low-end"
 
     # create algorithm object
     alg = SensorEmulationAlg()
 
     imu = IMU(imu_str)
+    gps = GPS(gps_str)
 
-    ins_mng = InsAlgorithmManager(alg)
+    ins_mng = InsAlgorithmManager(alg, imu, gps)
 
     ins_mng.read_input_data(
         # Time

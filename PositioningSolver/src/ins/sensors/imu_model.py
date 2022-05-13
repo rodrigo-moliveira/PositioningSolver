@@ -1,6 +1,9 @@
 # Class to store the IMU Model (stochastic model stats)
 # até posso colocar aqui a adição dos valores dos erros...
 
+import os
+from pathlib import Path
+
 """
 Available stochastic models:
     - White Noise
@@ -20,14 +23,13 @@ Definir o sensors model:
 
 
 """
-import os
-
 from PositioningSolver.src.io_manager.import_imu import read_imu_file
 
+__PATH__ = Path(__file__).parent.absolute()
 SENSOR_PATH_MAP = {
-    "low-end": os.path.abspath("../../PositioningSolver/inputs/sensors/low-end/imu.json"),
-    "mid-end": os.path.abspath("../../PositioningSolver/inputs/sensors/mid-end/imu.json"),
-    "high-end": os.path.abspath("../../PositioningSolver/inputs/sensors/high-end/imu.json")
+    "low-end": os.path.abspath(__PATH__/"../../../inputs/sensors/low-end/imu.json"),
+    "mid-end": os.path.abspath(__PATH__/"../../../inputs/sensors/mid-end/imu.json"),
+    "high-end": os.path.abspath(__PATH__/"../../../inputs/sensors/high-end/imu.json")
 }
 
 

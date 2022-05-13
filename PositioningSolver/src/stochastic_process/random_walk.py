@@ -18,7 +18,7 @@ class RandomWalk(StochasticProcessGen):
         else:
             self._initial = np.zeros(axis)
 
-    def compute(self):
+    def compute(self, *args):
         walk = np.zeros((self._dim, self._axis))
 
         # set initial condition

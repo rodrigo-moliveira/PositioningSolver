@@ -1,11 +1,6 @@
 import numpy as np
 
 
-def import_pvat():
-    # get user options, datamanager and input PVAT files
-    pass
-
-
 def read_csv(filepath, ignore_header=True, delimiter=",", usecols=None, factor=None, function=None):
     _ignore = 0 if ignore_header is False else 1
 

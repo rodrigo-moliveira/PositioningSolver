@@ -11,7 +11,7 @@ class RandomConstant(StochasticProcessGen):
 
         self._std = std
 
-    def compute(self):
+    def compute(self, *args):
         val = np.random.normal(scale=self._std, size=self._axis)
 
         return np.ones((self._dim, self._axis)) * val

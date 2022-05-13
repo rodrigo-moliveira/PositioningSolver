@@ -16,7 +16,7 @@ from PositioningSolver.src.io_manager.import_pvat import read_csv
 
 class InsAlgorithmManager:
 
-    def __init__(self, algorithm):
+    def __init__(self, algorithm, imu=None, gps=None):
         self.data_manager = InsDataManager()
         self.algorithm = algorithm
 
