@@ -17,13 +17,13 @@ def main():
     imu_str = "low-end"
     gps_str = "low-end"
 
-    # create algorithm object
-    alg = SensorEmulationAlg()
-
     imu = IMU(imu_str)
     gps = GPS(gps_str)
 
-    ins_mng = InsAlgorithmManager(alg, imu, gps)
+    # create algorithm object
+    alg = SensorEmulationAlg(imu, gps)
+
+    ins_mng = InsAlgorithmManager(alg)
 
     ins_mng.read_input_data(
         # Time

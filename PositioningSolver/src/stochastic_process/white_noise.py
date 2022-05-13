@@ -11,5 +11,7 @@ class WhiteNoise(StochasticProcessGen):
 
         self._std = std
 
-    def compute(self, *args):
-        return np.random.normal(scale=self._std, size=(self._dim, self._axis))
+    def compute(self, sampling_time=1):
+        std = self._std / np.sqrt(sampling_time)
+        print(std)
+        return np.random.normal(scale=std, size=(self._dim, self._axis))

@@ -3,7 +3,7 @@
 
 import os
 from pathlib import Path
-
+from PositioningSolver.src import stochastic_process as st
 """
 Available stochastic models:
     - White Noise
@@ -48,6 +48,31 @@ class _Process:
     def __repr__(self):
         return str(self)
 
+    def get_stochastic_process(self, dim) -> st.StochasticProcessGen:
+        if self.process == "gauss_markov":
+            std = self.stats["prn"]
+            tau = self.stats["tau"]
+            if tau is None or tau < 0:
+                # resort to Random Walk
+                return st.RandomWalk(dim=dim, std=std, axis=3)
+            return st.GaussMarkov(dim=dim, std=std, correlation_time=tau, axis=3)
+
+        elif self.process == "random_constant":
+            std = self.stats["std"]
+            return st.RandomConstant(dim=dim, std=std, axis=3)
+
+        elif self.process == "constant":
+            bias = self.stats["bias"]
+            return st.RandomConstant(dim=dim, std=bias, axis=3)
+
+        elif self.process == "white_noise":
+            std = self.stats["std"]
+            return st.WhiteNoise(dim=dim, std=std, axis=3)
+
+        else:
+            # this should never happen...
+            raise ValueError(f"Unknown process {self.process}")
+
 
 class IMU:
 
@@ -85,6 +110,11 @@ class IMU:
 
     def set(self, sensor, model, process, stats):
         self._data[sensor][model].set(process, stats)
+
+    def __getitem__(self, sensor):
+        if sensor not in self._data:
+            raise KeyError(f"Sensor must be 'gyroscope' or 'accelerometer', and not {sensor}")
+        return self._data[sensor]
 
     def __str__(self):
         return f"IMU[{str(self._data)}]"

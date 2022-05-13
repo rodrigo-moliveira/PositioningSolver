@@ -19,22 +19,49 @@ from PositioningSolver.src.math_utils.finite_diff import finite_difference
 
 
 class SensorEmulationAlg(InsAlgorithm):
-    def __init__(self):
+    def __init__(self, imu, gps):
         super().__init__()
         self.inputs = ["time", "ref_pos", "ref_vel", "ref_att"]
         self.outputs = ["ref_gyro", "ref_accel", "gyro", "accel", "gps"]
+        self.imu = imu
+        self.gps = gps
 
     def __str__(self):
         return "InsAlgorithm(Sensor Emulation Algorithm)"
 
     def compute(self, time, pos_lld, vel_eb_n, euler_att):
         true_gyro, true_accel = self._compute_true_imu_readouts(time, pos_lld, vel_eb_n, euler_att)
+        sampling_time = float(time[1] - time[0])
 
         # compute error readouts
+        self._corrupt_noise_imu(true_gyro, true_accel, sampling_time)
+        # self._corrupt_noise_gps(pos_lld, vel_eb_n, euler_att)
 
         # add to outputs
-        self.results.append(None)
-        self.results.append(None)
+        # self.results.append(None)
+        # self.results.append(None)
+
+    def _corrupt_noise_imu(self, true_gyro, true_accel, sampling_time):
+        for sensor, true_readouts in zip(["gyroscope", "accelerometer"], [true_gyro, true_accel]):
+            readout = self._add_errors_imu(sensor, true_readouts, sampling_time)
+
+            self.results.append(readout)
+
+    def _add_errors_imu(self, sensor, true_readouts, sampling_time):
+        user_models = self.imu[sensor]
+
+        # TODO missing misalignment and scale_factor
+        misalignment = user_models["misalignment"].get_stochastic_process(len(true_readouts)).compute(sampling_time)
+        scale_factor = user_models["scale_factor"].get_stochastic_process(len(true_readouts)).compute(sampling_time)
+        bias_constant = user_models["bias_constant"].get_stochastic_process(len(true_readouts)).compute(sampling_time)
+        bias_drift = user_models["bias_drift"].get_stochastic_process(len(true_readouts)).compute(sampling_time)
+        noise = user_models["observation_noise"].get_stochastic_process(len(true_readouts)).compute(sampling_time)
+        print(np.shape(true_readouts), np.shape(bias_constant), np.shape(bias_drift), np.shape(noise))
+        readout = true_readouts + bias_drift + bias_constant + noise
+
+        return readout
+
+
 
     def _compute_true_imu_readouts(self, time, pos_lld, vel_eb_n, euler_att):
         # n-frame mechanization
