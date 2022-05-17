@@ -6,6 +6,7 @@ from pathlib import Path
 __PATH__ = Path(__file__).parent.absolute()
 
 import numpy as np
+from PositioningSolver.src import stochastic_process as st
 
 SENSOR_PATH_MAP = {
     "low-end": os.path.abspath(__PATH__ / "../../../inputs/sensors/low-end/gps.json"),
@@ -48,6 +49,13 @@ class GPS:
     def set(self, json_dict):
         self._data["position"] = np.array(json_dict["position"]["std"])
         self._data["velocity"] = np.array(json_dict["velocity"]["std"])
+
+    def get_stochastic_process(self, dim, process) -> st.StochasticProcessGen:
+        if process == "position" or process == "velocity":
+            std = self._data[process]
+            return st.WhiteNoise(dim=dim, std=std, axis=3)
+        else:
+            raise AttributeError(f"process {process} must either be 'position' or 'velocity'")
 
     def __str__(self):
         return f"IMU[{str(self._data)}]"

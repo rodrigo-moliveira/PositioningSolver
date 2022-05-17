@@ -14,7 +14,7 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
 class InsDataManager(Container):
     __slots__ = ["time", "ref_pos", "ref_vel", "ref_att",
-                 "ref_gyro", "ref_accel", "gyro", "accel", "gps",
+                 "ref_gyro", "ref_accel", "gyro", "accel", "gps", "gps_ecef",
                  "_available", "_do_not_save"]
 
     def __init__(self):
@@ -86,6 +86,14 @@ class InsDataManager(Container):
                                  legend=['gps_lat', 'gps_lon', 'gps_down',
                                          'gps_vN', 'gps_vE', 'gps_vD'],
                                  ignore_first_row=True)
+        # ECEF GPS outputs
+        self.gps_ecef = SimulatedData(name='gps_ecef',
+                                      description='GPS ECEF position and ECEF velocity measurements (v_eb_e)',
+                                      units=['m', 'm', 'm', 'm/s', 'm/s', 'm/s'],
+                                      output_units=['m', 'm', 'm', 'm/s', 'm/s', 'm/s'],
+                                      legend=['gps_ecef_x', 'gps_ecef_y', 'gps_ecef_z',
+                                              'gps_vx', 'gps_vy', 'gps_vz'],
+                                      ignore_first_row=True)
 
         # available data for the current simulation
         self._available = []
