@@ -1,5 +1,4 @@
 # Class to store the IMU Model (stochastic model stats)
-# até posso colocar aqui a adição dos valores dos erros...
 
 import os
 from pathlib import Path

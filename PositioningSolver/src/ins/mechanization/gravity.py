@@ -105,17 +105,18 @@ def geo_param(pos):
     """
     # some constants
     normal_gravity = 9.7803253359
-    k = 0.00193185265241        # WGS-84 gravity model constant. For more details, refer to
-                                # https://en.wikipedia.org/wiki/Gravity_of_Earth
-    m = 0.00344978650684        # m = w*w*a*a*b/GM
+    k = 0.00193185265241  # WGS-84 gravity model constant. For more details, refer to
+    # https://en.wikipedia.org/wiki/Gravity_of_Earth
+    m = 0.00344978650684  # m = w*w*a*a*b/GM
     # calc
     sl = np.sin(pos[0])
     cl = np.cos(pos[0])
     sl_sqr = sl * sl
     h = pos[2]
 
-    g1 = normal_gravity * (1 + k*sl_sqr) / np.sqrt(1.0 - e_sq*sl_sqr)
-    g = g1 * (1.0 - (2.0/EARTH_A) * (1.0 + FLATTENING + m - 2.0*FLATTENING*sl_sqr)*h + 3.0*h*h/EARTH_A/EARTH_A)
+    g1 = normal_gravity * (1 + k * sl_sqr) / np.sqrt(1.0 - e_sq * sl_sqr)
+    g = g1 * (1.0 - (2.0 / EARTH_A) * (
+                1.0 + FLATTENING + m - 2.0 * FLATTENING * sl_sqr) * h + 3.0 * h * h / EARTH_A / EARTH_A)
     return g, sl, cl
 
 
@@ -125,7 +126,7 @@ def get_earth_radii(lat):
     # Rn -> primer vertical at provided latitude
     # Rm -> Radius of curvature in the meridian
 
-    sl_sqr = np.sin(lat)**2
+    sl_sqr = np.sin(lat) ** 2
 
     rm = (EARTH_A * (1 - e_sq)) / (np.sqrt(1.0 - e_sq * sl_sqr) * (1.0 - e_sq * sl_sqr))
     rn = EARTH_A / (np.sqrt(1.0 - e_sq * sl_sqr))
@@ -162,7 +163,7 @@ def grav_acceleration(r_eb_e, mode="earth"):
         raise TypeError(f"Invalid argument 'mode'. Must either be 'earth' or 'inertial'")
 
     if mode == "earth":
-        w_2 = Constant.EARTH_ROTATION**2
+        w_2 = Constant.EARTH_ROTATION ** 2
     else:
         w_2 = 0
     x, y, z = r_eb_e

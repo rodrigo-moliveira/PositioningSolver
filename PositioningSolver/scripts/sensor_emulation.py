@@ -22,10 +22,9 @@ def main():
 
     # create algorithm object
     alg = SensorEmulationAlg(imu, gps)
-
     ins_mng = InsAlgorithmManager(alg)
 
-    ins_mng.read_input_data(
+    ins_mng.read_input_pvat(
         # Time
         {"filepath": WORKSPACE + ref_time_file, "units": ["s"],
          "ignore_header": True, "delimiter": ",", "usecols": None, "function": None},

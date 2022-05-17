@@ -1,7 +1,7 @@
 import os
 
-from PositioningSolver.src.ins.mechanization.gravity import lla2ecef
-from PositioningSolver.src.io_manager.import_timeseries import read_csv, downsample
+from PositioningSolver.src.ins.mechanization.gravity import lld2ecef
+from PositioningSolver.src.io_manager.import_pvat import read_csv, downsample
 from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.plots.plot_manager import plot_3D_trajectory, show_all
 
@@ -20,7 +20,7 @@ def main():
     #                 function=lambda x: swap_columns(x, 0, 2))
 
     # transform position lla to cartesian ECEF coordinates
-    position = lla2ecef(position_lla)
+    position = lld2ecef(position_lla)
 
     period = time[1] - time[0]
     frequency = 1  # output frequency, in Hz

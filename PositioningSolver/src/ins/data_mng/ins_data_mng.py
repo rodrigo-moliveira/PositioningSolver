@@ -13,8 +13,8 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
 
 class InsDataManager(Container):
-    __slots__ = ["time", "ref_pos", "ref_vel", "ref_att",
-                 "ref_gyro", "ref_accel", "gyro", "accel", "gps", "gps_ecef",
+    __slots__ = ["time", "ref_pos", "ref_vel", "ref_att", "ref_gyro", "ref_accel",
+                 "pos", "vel", "gyro", "accel", "gps", "gps_ecef",
                  "_available", "_do_not_save"]
 
     def __init__(self):
@@ -48,7 +48,7 @@ class InsDataManager(Container):
         # Sensor Measurements #
         #######################
 
-        # True (errorless) gyro readout
+        # True (errorless) gyro readout measurements
         self.ref_gyro = SimulatedData(name='ref_gyro',
                                       description='true angular velocity in the body frame (w_ib_b)',
                                       units=['rad/s', 'rad/s', 'rad/s'],
@@ -56,14 +56,14 @@ class InsDataManager(Container):
                                       legend=['ref_gyro_x', 'ref_gyro_y', 'ref_gyro_z'],
                                       ignore_first_row=True)
 
-        # True (errorless) accelerometer readout
+        # True (errorless) accelerometer readout measurements
         self.ref_accel = SimulatedData(name='ref_accel',
                                        description='true acceleration in the body frame (f_ib_b)',
                                        units=['m/s^2', 'm/s^2', 'm/s^2'],
                                        legend=['ref_accel_x', 'ref_accel_y', 'ref_accel_z'],
                                        ignore_first_row=True)
 
-        # Real (with error) gyro readout
+        # Real (with error) gyro readout measurements
         self.gyro = SimulatedData(name='gyro',
                                   description='gyro measurements w_ib_b',
                                   units=['rad/s', 'rad/s', 'rad/s'],
@@ -71,7 +71,7 @@ class InsDataManager(Container):
                                   legend=['gyro_x', 'gyro_y', 'gyro_z'],
                                   ignore_first_row=True)
 
-        # Real (with error) accelerometer readout
+        # Real (with error) accelerometer readout measurements
         self.accel = SimulatedData(name='accel',
                                    description='accelerometer measurements f_ib_b',
                                    units=['m/s^2', 'm/s^2', 'm/s^2'],
@@ -86,7 +86,8 @@ class InsDataManager(Container):
                                  legend=['gps_lat', 'gps_lon', 'gps_down',
                                          'gps_vN', 'gps_vE', 'gps_vD'],
                                  ignore_first_row=True)
-        # ECEF GPS outputs
+        
+        # ECEF GPS measurements
         self.gps_ecef = SimulatedData(name='gps_ecef',
                                       description='GPS ECEF position and ECEF velocity measurements (v_eb_e)',
                                       units=['m', 'm', 'm', 'm/s', 'm/s', 'm/s'],
@@ -94,6 +95,21 @@ class InsDataManager(Container):
                                       legend=['gps_ecef_x', 'gps_ecef_y', 'gps_ecef_z',
                                               'gps_vx', 'gps_vy', 'gps_vz'],
                                       ignore_first_row=True)
+
+        ################################
+        # Computed Position & Velocity #
+        ################################
+
+        # Computed Position
+        self.ref_pos = SimulatedData(name="pos",
+                                     description="computed position in the navigation frame (NED), in LLD form",
+                                     units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
+                                     legend=['pos_lat', 'pos_lon', 'pos_down'])
+
+        # Computed Velocity
+        self.ref_vel = SimulatedData(name='vel', description='computed velocity in the navigation frame (NED)',
+                                     units=['m/s', 'm/s', 'm/s'],
+                                     legend=['vel_N', 'vel_E', 'vel_D'])
 
         # available data for the current simulation
         self._available = []

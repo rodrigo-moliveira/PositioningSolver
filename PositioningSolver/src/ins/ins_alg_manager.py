@@ -20,7 +20,7 @@ class InsAlgorithmManager:
         self.data_manager = InsDataManager()
         self.algorithm = algorithm
 
-    def read_input_data(self, time_dict, position_dict, velocity_dict, attitude_dict):
+    def read_input_pvat(self, time_dict, position_dict, velocity_dict, attitude_dict):
 
         # TODO: check mandatory fields
         #   Position - filepath, form, units
@@ -97,6 +97,36 @@ class InsAlgorithmManager:
             velocity = convert_unit(velocity, velocity_dict.get("units"), ("m/s", "m/s", "m/s"))
         self.data_manager.add_data("ref_vel", velocity, ("m/s", "m/s", "m/s"))
 
+    def read_input_sensor_data(self, time_dict, gyro_dict, accel_dict):
+        # read time
+        time_arr = read_csv(time_dict.get("filepath"),
+                            time_dict.get("ignore_header", True),
+                            time_dict.get("delimiter", ","),
+                            time_dict.get("usecols", None),
+                            time_dict.get("factor", None),
+                            time_dict.get("function", None))
+        # transform to column vector
+        time_arr = time_arr.reshape(-1, 1)
+        self.data_manager.add_data("time", time_arr, units=time_dict.get("units"))
+
+        # read gyroscope
+        gyroscope = read_csv(gyro_dict.get("filepath"),
+                             gyro_dict.get("ignore_header", True),
+                             gyro_dict.get("delimiter", ","),
+                             gyro_dict.get("usecols", None),
+                             gyro_dict.get("factor", None),
+                             gyro_dict.get("function", None))
+        self.data_manager.add_data("gyro", gyroscope, gyro_dict.get("units"))
+
+        # read accelerometer
+        accelerometer = read_csv(accel_dict.get("filepath"),
+                                 accel_dict.get("ignore_header", True),
+                                 accel_dict.get("delimiter", ","),
+                                 accel_dict.get("usecols", None),
+                                 accel_dict.get("factor", None),
+                                 accel_dict.get("function", None))
+        self.data_manager.add_data("accel", accelerometer, accel_dict.get("units"))
+
     def run(self):
 
         # fetch input variables to this algorithm
@@ -114,7 +144,6 @@ class InsAlgorithmManager:
         for _data, _name in zip(_results, self.algorithm.outputs):
             if _data is not None:
                 self.data_manager.add_data(_name, _data)
-
 
     def results(self, data_dir=None):
         #### check data dir
