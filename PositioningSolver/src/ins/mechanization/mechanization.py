@@ -25,7 +25,7 @@ def compute_w_en_n(v_eb_n, lld):
     w_en_n[1] = -v_n / rm_effective  # wE
     w_en_n[2] = -v_e * np.tan(lat) / rn_effective  # wD
 
-    return w_en_n
+    return w_en_n, rm_effective, rn_effective
 
 
 def compute_w_ie_e():

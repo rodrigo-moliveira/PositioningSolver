@@ -160,7 +160,7 @@ def grav_acceleration(r_eb_e, mode="earth"):
     """
 
     if mode not in ["earth", "inertial"]:
-        raise TypeError(f"Invalid argument 'mode'. Must either be 'earth' or 'inertial'")
+        raise AttributeError(f"Invalid argument 'mode'. Must either be 'earth' or 'inertial'")
 
     if mode == "earth":
         w_2 = Constant.EARTH_ROTATION ** 2

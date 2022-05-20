@@ -14,7 +14,7 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
 class InsDataManager(Container):
     __slots__ = ["time", "ref_pos", "ref_vel", "ref_att", "ref_gyro", "ref_accel",
-                 "pos", "vel", "gyro", "accel", "gps", "gps_ecef",
+                 "pos", "vel", "att", "gyro", "accel", "gps", "gps_ecef",
                  "_available", "_do_not_save"]
 
     def __init__(self):
@@ -86,7 +86,7 @@ class InsDataManager(Container):
                                  legend=['gps_lat', 'gps_lon', 'gps_down',
                                          'gps_vN', 'gps_vE', 'gps_vD'],
                                  ignore_first_row=True)
-        
+
         # ECEF GPS measurements
         self.gps_ecef = SimulatedData(name='gps_ecef',
                                       description='GPS ECEF position and ECEF velocity measurements (v_eb_e)',
@@ -101,15 +101,21 @@ class InsDataManager(Container):
         ################################
 
         # Computed Position
-        self.ref_pos = SimulatedData(name="pos",
-                                     description="computed position in the navigation frame (NED), in LLD form",
-                                     units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
-                                     legend=['pos_lat', 'pos_lon', 'pos_down'])
+        self.pos = SimulatedData(name="pos",
+                                 description="computed position in the navigation frame (NED), in LLD form",
+                                 units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
+                                 legend=['pos_lat', 'pos_lon', 'pos_down'])
 
         # Computed Velocity
-        self.ref_vel = SimulatedData(name='vel', description='computed velocity in the navigation frame (NED)',
-                                     units=['m/s', 'm/s', 'm/s'],
-                                     legend=['vel_N', 'vel_E', 'vel_D'])
+        self.vel = SimulatedData(name='vel', description='computed velocity in the navigation frame (NED)',
+                                 units=['m/s', 'm/s', 'm/s'],
+                                 legend=['vel_N', 'vel_E', 'vel_D'])
+
+        # Computed Attitude
+        self.att = SimulatedData(name='att', description='computed attitude (Euler angles, ZYX convention)',
+                                 units=['rad', 'rad', 'rad'],
+                                 output_units=['deg', 'deg', 'deg'],
+                                 legend=['Roll', 'Pitch', 'Yaw'])
 
         # available data for the current simulation
         self._available = []
