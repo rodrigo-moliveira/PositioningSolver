@@ -2,12 +2,12 @@ import numpy as np
 
 from PositioningSolver.src.algorithms.ins.ins_alg import InsAlgorithm
 from PositioningSolver.src.ins import mechanization
-from PositioningSolver.src.ins.mechanization import get_earth_radii, dcm2euler, matrix_ned2body
-from PositioningSolver.src.math_utils.matrix import vector2skew_symmetric
+from PositioningSolver.src.ins.mechanization import dcm2euler, fix_angles
+from PositioningSolver.src.ins.mechanization.propagation import INSPropagator
 
 
 class FreeIntegrationAlg(InsAlgorithm):
-    def __init__(self, r0, v0, att0, integration="euler"):
+    def __init__(self, r0, v0, att0, integration="euler", attitude_form="dcm"):
         super().__init__()
         self.inputs = ["time", "gyro", "accel"]
         self.outputs = ["pos", "vel", "att"]  # TODO save vel_ecef, vel_ned, vel_body ???
@@ -24,14 +24,27 @@ class FreeIntegrationAlg(InsAlgorithm):
         self.vel_eb_b = None
         self.c_bn = None
 
+        # Integrator object
         if integration.lower() not in ["euler", "rk4"]:
             raise AttributeError(f"integration must either be 'euler' or 'rk4'")
         self.integration = integration.lower()
+
+        # propagator object
+        if attitude_form.lower() not in ["euler", "dcm"]:
+            raise AttributeError(f"attitude_form must either be 'euler' or 'dcm'")
+        self.attitude_form = attitude_form
+        self.prop = INSPropagator(attitude_form=attitude_form)  # euler or dcm
 
     def __str__(self):
         return "InsAlgorithm(Free Integration)"
 
     def compute(self, time, gyro, accel):
+        if self.integration == "euler":
+            self.compute_euler(time, gyro, accel)
+        else:
+            self.compute_rk4(time, gyro, accel)
+
+    def compute_euler(self, time, gyro, accel):
         if len(time) != len(gyro) or len(time) != len(accel) or len(gyro) != len(accel):
             raise ValueError(f"Provided vectors must have the same time-length. Time has length {len(time)}"
                              f", gyro length {len(gyro)} and accel length {len(accel)}")
@@ -53,88 +66,100 @@ class FreeIntegrationAlg(InsAlgorithm):
         self.c_bn.append(c_nb0.T)
 
         for i in range(1, len(time)):
-            accel[i - 1,:] = np.array([132, 10, 9.4])
-            gyro[i - 1,:] = np.array([0.3, -3, 2])
-
-            self.vel_eb_n[i - 1] = np.array([40,523,-2])
-            self.pos[i-1] = np.array([1,3,100])
-            self.att[i-1] = np.array([1,-2,0.42])
-
-            c_bn = mechanization.matrix_ned2body(self.att[i-1]).T
 
             # get state at t_{i-1}
-            #c_bn = self.c_bn[i-1]
-
+            att = self.att[i-1]
+            c_bn = self.c_bn[i-1]
             v_eb_n = self.vel_eb_n[i-1]
             lld = self.pos[i-1]
             w_ib_b = gyro[i-1]
             f_ib_b = accel[i-1]
-            step = 0.01
+            step = time[i] - time[i-1]
 
-            # get intermediate vectors at time t_{i-1}
-            w_ie_n = mechanization.compute_w_ie_n(lld[0])
-            w_en_n, rm_effective, rn_effective = mechanization.compute_w_en_n(v_eb_n, lld)
-            r_eb_e = mechanization.lld2ecef(lld)
-            g_eb_e = mechanization.grav_acceleration(r_eb_e)
-            skew_en_n = vector2skew_symmetric(w_en_n)
-            skew_ie_n = vector2skew_symmetric(w_ie_n)
-            skew_ib_b = vector2skew_symmetric(w_ib_b)
-            c_en = mechanization.matrix_ecef2ned(lld[0], lld[1])  # matrix from e to n
-            w_nb_b = w_ib_b - c_bn.T @ (w_en_n + w_ie_n)
-            #print("w_en_n, w_ie_n", w_en_n, w_ie_n)
-            # attitude dot
-            phi, theta, psi = self.att[i-1]
-            phi_dot = (w_nb_b[1] * np.sin(phi) + w_nb_b[2]*np.cos(phi))*np.tan(theta)+w_nb_b[0]
-            theta_dot = w_nb_b[1]*np.cos(phi)-w_nb_b[2]*np.sin(phi)
-            psi_dot = (w_nb_b[1]*np.sin(phi)+w_nb_b[2]*np.cos(phi))/np.cos(theta)
-            print("phi_dot, theta_dot, psi_dot", phi_dot, theta_dot, psi_dot)
+            # implement x_dot = f(x,u)
+            lld_dot, vel_dot, att_dot = self.prop.ins_diff_eq(step, lld, att, v_eb_n, w_ib_b, f_ib_b, c_bn=c_bn)
 
-            #print("rm, rn, g", rm_effective, rn_effective, c_en@g_eb_e)
-            #print("w_nb_b", w_ib_b - c_bn.T@(w_en_n + w_ie_n))
-            # compute derivatives at time t_{i-1}
-            c_bn_dot = c_bn @ skew_ib_b - (skew_ie_n + skew_en_n) @ c_bn
+            # euler integration step from t_{i-1} to t_{i} and save results at index i
+            pos_i = lld + lld_dot * step
+            vel_i = v_eb_n + vel_dot * step
 
+            # attitude update depends on state form (may be euler angles or dcm matrix)
+            if self.attitude_form == "euler":
+                att_i = att + att_dot * step
+                fix_angles(att_i)
+                c_bn_i = mechanization.matrix_ned2body(att_i).T
 
-            v_eb_n_dot = c_bn @ f_ib_b + c_en @ g_eb_e - (skew_en_n + 2 * skew_ie_n) @ v_eb_n
-            #g=c_en @ g_eb_e
-            #g[0]=0;g[1]=0
-            #v_eb_n_dot = c_bn @ f_ib_b + g - (skew_en_n + 2 * skew_ie_n) @ v_eb_n
-            #print("terms", c_bn @ f_ib_b, g, (skew_en_n + 2 * skew_ie_n) @ v_eb_n)
+            else:  # self.attitude_form == "dcm"
+                c_bn_i = c_bn @ att_dot
+                att_i = dcm2euler(c_bn_i)
+                fix_angles(att_i)
 
+            # save results for this iteration
+            self.c_bn.append(c_bn_i)
+            self.vel_eb_n[i] = vel_i.copy()
+            self.pos[i] = pos_i.copy()
+            self.att[i] = att_i.copy()
 
-            # ! temp !
-            rm, rn = get_earth_radii(lld[0])
-            rm_effective = rm - lld[2]
-            rn_effective = rn - lld[2]
-            lat_dot = v_eb_n[0] / rm_effective
-            lon_dot = v_eb_n[1] / rn_effective / np.cos(lld[0])
-            d_dot = v_eb_n[2]
-            #print("pos_dot, vel_dot", np.array([lat_dot, lon_dot, d_dot]), v_eb_n_dot)
+        self.results.append(self.pos)
+        self.results.append(self.vel_eb_n)
+        self.results.append(self.att)
 
-            # apply euler integration step from t_{i-1} to t_{i} and save results at index i
-            pos_i = lld + np.array([lat_dot, lon_dot, d_dot]) * step
-            vel_i = v_eb_n + v_eb_n_dot * step
-            #c_bn_i = c_bn + c_bn_dot * step
+    def compute_rk4(self, time, gyro, accel):
+        if len(time) != len(gyro) or len(time) != len(accel) or len(gyro) != len(accel):
+            raise ValueError(f"Provided vectors must have the same time-length. Time has length {len(time)}"
+                             f", gyro length {len(gyro)} and accel length {len(accel)}")
 
-            #print(c_bn_dot)
-            #att = dcm2euler(c_bn_i)
-            att2 = self.att[i-1] + np.array([phi_dot, theta_dot, psi_dot])*step
-            c_bn_2 = mechanization.matrix_ned2body(att2).T
+        # create output vectors
+        n = len(accel)
+        self.att = np.zeros((n, 3))
+        self.pos = np.zeros((n, 3))
+        self.vel_eb_n = np.zeros((n, 3))  # NED vel
+        self.vel_eb_b = np.zeros((n, 3))  # body vel
+        self.c_bn = []
 
-            #print("attitudes!", att, att2)
-            #print("final pos, vel, att", pos_i, vel_i, att)
-            #print("final c_bn", c_bn_i)
+        # initialize with initial condition at t0
+        self.att[0] = self.att0
+        self.pos[0] = self.r0
+        self.vel_eb_n[0] = self.v0
+        c_nb0 = mechanization.matrix_ned2body(self.att0)
+        self.vel_eb_b = c_nb0 @ self.v0
+        self.c_bn.append(c_nb0.T)
 
-            # save results
-            self.c_bn.append(c_bn_2)
-            #print(self.c_bn)
-            self.vel_eb_n[i] = vel_i
-            self.pos[i] = pos_i
-            #exit()
-            print(pos_i, vel_i, att2)
-            exit()
+        for i in range(1, len(time)):
 
-        #print(len(self.pos));exit()
+            # get state at t_i
+            att = self.att[i-1]
+            c_bn = self.c_bn[i-1]
+            v_eb_n = self.vel_eb_n[i-1]
+            lld = self.pos[i-1]
+            w_ib_b = gyro[i-1]
+            f_ib_b = accel[i-1]
+            step = time[i] - time[i-1]
+
+            # implement x_dot = f(x,u)
+            lld_dot, vel_dot, att_dot = self.prop.ins_diff_eq(step, lld, att, v_eb_n, w_ib_b, f_ib_b, c_bn=c_bn)
+
+            # euler integration step from t_{i-1} to t_{i} and save results at index i
+            pos_i = lld + lld_dot * step
+            vel_i = v_eb_n + vel_dot * step
+
+            # attitude update depends on state form (may be euler angles or dcm matrix)
+            if self.attitude_form == "euler":
+                att_i = att + att_dot * step
+                fix_angles(att_i)
+                c_bn_i = mechanization.matrix_ned2body(att_i).T
+
+            else:  # self.attitude_form == "dcm"
+                c_bn_i = c_bn @ att_dot
+                att_i = dcm2euler(c_bn_i)
+                fix_angles(att_i)
+
+            # save results for this iteration
+            self.c_bn.append(c_bn_i)
+            self.vel_eb_n[i] = vel_i.copy()
+            self.pos[i] = pos_i.copy()
+            self.att[i] = att_i.copy()
+
         self.results.append(self.pos)
         self.results.append(self.vel_eb_n)
         self.results.append(self.att)

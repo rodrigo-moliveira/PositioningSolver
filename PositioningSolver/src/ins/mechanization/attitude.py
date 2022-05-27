@@ -1,4 +1,10 @@
+from PositioningSolver.src.math_utils.Constants import Constant
 from PositioningSolver.src.math_utils.matrix import *
+
+
+PI = Constant.PI
+HALF_PI = PI / 2
+TWO_PI = 2 * PI
 
 
 def matrix_ned2body(angles):
@@ -122,3 +128,29 @@ def angle_range_pi(x):
     if x > np.pi:
         x = x - (2*np.pi)
     return x
+
+
+def fix_angles(att):
+    # fix roll, pitch and yaw ( att = [roll, pitch, yaw] )
+
+    # pitch is within [-pi/2, pi/2].
+    if att[1] > HALF_PI:
+        att[1] = PI - att[1]
+        att[0] = att[0] + PI
+        att[2] = att[2] + PI
+    elif att[1] < -HALF_PI:
+        att[1] = -PI - att[1]
+        att[0] = att[0] + PI
+        att[2] = att[2] + PI
+
+    # roll is within [-pi, pi]
+    if att[0] > PI:
+        att[0] = att[0] - TWO_PI
+    elif att[0] < -PI:
+        att[0] = att[0] + TWO_PI
+
+    # yaw is within [-pi, pi]
+    if att[2] > PI:
+        att[2] = att[2] - TWO_PI
+    elif att[2] < -PI:
+        att[2] = att[2] + TWO_PI
