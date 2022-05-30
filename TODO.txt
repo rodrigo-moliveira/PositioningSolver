@@ -1,8 +1,9 @@
 Limpar a classe ins_integration
 Adicionar uma classe de performance evaluation (comparar pvat de ref com o estimado)
-Implementar o propagador runge kutta no ins_integration
+Implementar o propagador runge kutta no ins_integration. Implementar também o propagador da geonumerics :)
 Release -> Limpar o código. Uniformizar corridas INS / GNSS. Criar um log, documentar as funçoes principais...
             Atualizar readme...
+
 
 Próximo passo: finalizar o codigo com o algoritmo loosely coupled
 Estudar. Implementar o loosely sem parametros de estimacao extra

@@ -145,14 +145,23 @@ class InsAlgorithmManager:
             if _data is not None:
                 self.data_manager.add_data(_name, _data)
 
-    def results(self, data_dir=None):
+    def results(self, data_dir=None, performance=False):
         #### check data dir
-        data_saved = []
+
         if data_dir is not None:  # data_dir specified, meaning to save .csv files
             data_dir = self._check_data_dir(data_dir)
 
             # save data files
             self.data_manager.save_data(data_dir)
+
+        if performance:
+            # call performance evaluation..
+            summary = self.data_manager.performance_evaluation()
+            if data_dir is not None:
+                pass
+                # save summary file
+            print(summary)
+
 
     def _check_data_dir(self, data_dir):
         """

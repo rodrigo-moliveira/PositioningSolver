@@ -1,3 +1,5 @@
+import numpy as np
+
 from PositioningSolver.src.ins.data_mng.unit_conversions import convert_unit
 
 
@@ -128,6 +130,10 @@ class SimulatedData:
 
         data_converted = convert_unit(self.data, self.units, self.output_units)
 
+        # update self.data and self.units
+        # self.data = data_converted
+        # self.units = self.output_units
+
         # check dimension _dim of vector
         try:
             _len, _dim = data_converted.shape
@@ -144,6 +150,10 @@ class SimulatedData:
         for i in range(_start, _len):
             line = ""
 
+            # check if there are NAN entries in this line (ignore line if True)
+            if np.isnan(np.sum(data_converted[i])):
+                continue
+
             if time_arr is not None:
                 line += f"{time_arr[i,0]}" + ","
 
@@ -155,3 +165,6 @@ class SimulatedData:
             _data.append(line)
 
         return _data
+
+    def is_empty(self):
+        return self.data is None

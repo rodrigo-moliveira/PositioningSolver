@@ -10,6 +10,9 @@ class INSPropagator:
         self.attitude = attitude_form
         self.w_nb_b = None
 
+        # TODO: colocar a propagacao aqui. Do género, enviar a base de dados (gyro e accel). Depois a funcao recebe o i e o i+1 e faz as contas necessarias
+        #   guardar também os resultados anteriores...
+
     def ins_diff_eq(self, step, lld, att, v_eb_n, w_ib_b, f_ib_b, c_bn=None):
 
         if c_bn is None:

@@ -10,6 +10,7 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 #           that is roll(x), pitch(y) and yaw(z)
 
 # gps position and velocity are computed in ecef. Position is stored in LLD and velocity in NED components
+from PositioningSolver.src.ins.data_mng.unit_conversions import convert_unit
 
 
 class InsDataManager(Container):
@@ -121,7 +122,7 @@ class InsDataManager(Container):
         self._available = []
 
         # SimulatedData which is not intended to be saved
-        self._do_not_save = ["time"]  # TODO after code is validated, put the reference PVAT here
+        self._do_not_save = []  # TODO after code is validated, put the reference PVAT here
 
     def __str__(self):
         return f'{type(self).__name__}( DataManager for INS algorithms )'
@@ -191,3 +192,32 @@ class InsDataManager(Container):
                 if sim is not None:
                     # print("saving", sim_data)
                     sim.save_to_file(directory, self.time)
+
+    def performance_evaluation(self):
+        # pos, vel, att
+
+        # position
+        pos = getattr(self, "pos", None)
+        pos_ref = getattr(self, "ref_pos", None)
+        if not pos.is_empty() and not pos_ref.is_empty():
+            self._evaluate(pos, pos_ref)
+
+        # velocity
+        vel = getattr(self, "vel", None)
+        vel_ref = getattr(self, "ref_vel", None)
+        if not vel.is_empty() and not vel_ref.is_empty():
+            self._evaluate(vel, vel_ref)
+
+        # attitude
+        att = getattr(self, "att", None)
+        att_ref = getattr(self, "ref_att", None)
+        if not att.is_empty() and not att_ref.is_empty():
+            self._evaluate(att, att_ref)
+
+    def _evaluate(self, data, data_ref):
+        _data = convert_unit(data.data, data.units, data.output_units)
+        _ref_data = convert_unit(data_ref.data, data_ref.units, data_ref.output_units)
+
+        print(_data - _ref_data)
+
+
