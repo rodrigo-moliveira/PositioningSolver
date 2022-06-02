@@ -1,3 +1,5 @@
+import numpy as np
+
 from PositioningSolver.src.data_types.containers.Container import Container
 from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
@@ -11,12 +13,13 @@ from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
 # gps position and velocity are computed in ecef. Position is stored in LLD and velocity in NED components
 from PositioningSolver.src.ins.data_mng.unit_conversions import convert_unit
+from PositioningSolver.src.ins.mechanization import lld2ecef
 
 
 class InsDataManager(Container):
     __slots__ = ["time", "ref_pos", "ref_vel", "ref_att", "ref_gyro", "ref_accel",
                  "pos", "vel", "att", "gyro", "accel", "gps", "gps_ecef",
-                 "_available", "_do_not_save"]
+                 "_available", "_do_not_save", "error_dict", "_plottable"]
 
     def __init__(self):
         super().__init__()
@@ -103,26 +106,32 @@ class InsDataManager(Container):
 
         # Computed Position
         self.pos = SimulatedData(name="pos",
-                                 description="computed position in the navigation frame (NED), in LLD form",
+                                 description="estimated position in the navigation frame (NED), in LLD form "
+                                             "(latitude, longitude, altitude)",
                                  units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
                                  legend=['pos_lat', 'pos_lon', 'pos_down'])
 
         # Computed Velocity
-        self.vel = SimulatedData(name='vel', description='computed velocity in the navigation frame (NED)',
+        self.vel = SimulatedData(name='vel', description='estimated velocity in the navigation frame NED'
+                                                         ' (v_North, v_East, v_Down)',
                                  units=['m/s', 'm/s', 'm/s'],
                                  legend=['vel_N', 'vel_E', 'vel_D'])
 
         # Computed Attitude
-        self.att = SimulatedData(name='att', description='computed attitude (Euler angles, ZYX convention)',
+        self.att = SimulatedData(name='att', description='estimated attitude (Euler angles roll, pitch, yaw, '
+                                                         'ZYX convention)',
                                  units=['rad', 'rad', 'rad'],
                                  output_units=['deg', 'deg', 'deg'],
                                  legend=['Roll', 'Pitch', 'Yaw'])
 
         # available data for the current simulation
         self._available = []
+        self._plottable = {"projection"}
 
         # SimulatedData which is not intended to be saved
         self._do_not_save = []  # TODO after code is validated, put the reference PVAT here
+
+        self.error_dict = {}
 
     def __str__(self):
         return f'{type(self).__name__}( DataManager for INS algorithms )'
@@ -195,29 +204,90 @@ class InsDataManager(Container):
 
     def performance_evaluation(self):
         # pos, vel, att
+        summary = ""
 
-        # position
-        pos = getattr(self, "pos", None)
-        pos_ref = getattr(self, "ref_pos", None)
-        if not pos.is_empty() and not pos_ref.is_empty():
-            self._evaluate(pos, pos_ref)
+        for data, ref_data in zip(["pos", "vel", "att"], ["ref_pos", "ref_vel", "ref_att"]):
+            _data = getattr(self, data, None)
+            _ref_data = getattr(self, ref_data, None)
+            if not _data.is_empty() and not _ref_data.is_empty():
+                summary += self._evaluate(_data, _ref_data)
 
-        # velocity
-        vel = getattr(self, "vel", None)
-        vel_ref = getattr(self, "ref_vel", None)
-        if not vel.is_empty() and not vel_ref.is_empty():
-            self._evaluate(vel, vel_ref)
+        return summary
 
-        # attitude
-        att = getattr(self, "att", None)
-        att_ref = getattr(self, "ref_att", None)
-        if not att.is_empty() and not att_ref.is_empty():
-            self._evaluate(att, att_ref)
+    @property
+    def available(self):
+        return self._available
 
     def _evaluate(self, data, data_ref):
         _data = convert_unit(data.data, data.units, data.output_units)
         _ref_data = convert_unit(data_ref.data, data_ref.units, data_ref.output_units)
+        tmp = None
 
-        print(_data - _ref_data)
+        if data.name == "pos":
+            # evaluate in lld form
+            err = self._evaluate_stats(_data, _ref_data, "pos_lld")
 
+            # evaluate in ecef form
+            _data_ecef = lld2ecef(data.data)
+            _ref_data_ecef = lld2ecef(data_ref.data)
+            tmp = self._evaluate_stats(_data_ecef, _ref_data_ecef, "pos_ecef", cartesian_coord=True)
 
+        elif data.name == "vel":
+            err = self._evaluate_stats(_data, _ref_data, data.name, cartesian_coord=True)
+
+        else:
+            err = self._evaluate_stats(_data, _ref_data, data.name)
+
+        # build statistics string
+        summary = f"""
+\tStatistics for {data.description} in units {data.output_units}:
+\t\tMean error = {err["mean"]}
+\t\tRMS error = {err["rms"]}
+\t\tMax error = {err["max"]}
+\t\tError Std = {err["std"]}
+"""
+        if "RMS_3D" in err:
+            summary += f"\t\t3D RMS error = {err['RMS_3D']}\n"
+
+        if tmp is not None:
+            summary += f"""
+\tStatistics for ECEF position in units [m, m, m]:
+\t\tMean error = {tmp["mean"]}
+\t\tRMS error = {tmp["rms"]}
+\t\tMax error = {tmp["max"]}
+\t\tError Std = {tmp["std"]}
+\t\t3D RMS error = {tmp["RMS_3D"]}
+"""
+
+        return summary
+
+    def _evaluate_stats(self, data, ref_data, name, cartesian_coord=False):
+        error = ref_data - data
+        _mean = np.mean(error, axis=0)
+        _std = np.std(error, axis=0)
+        _max = np.max(np.abs(error), axis=0)
+
+        # accumulate RMS along time
+        rms = np.array([0.0, 0.0, 0.0])
+        for arr in error:
+            rms += arr * arr
+
+        # get 1D RMS for all 3 components (x, y, z)
+        _rms = np.sqrt(1 / len(error) * rms)
+
+        stats = {"mean": _mean, "std": _std, "max": _max, "rms": _rms}
+
+        # get 3D RMS
+        if cartesian_coord:
+            _rms3D = np.sqrt(1 / len(error) * np.sum(rms))
+            stats["RMS_3D"] = _rms3D
+
+        # save error series
+        self.error_dict[name] = {"abs": error}
+
+        if cartesian_coord:
+            # compute and save RMS time series
+            rms_series = np.linalg.norm(error, axis=1)
+            self.error_dict[name] = {"rms": rms_series}
+
+        return stats

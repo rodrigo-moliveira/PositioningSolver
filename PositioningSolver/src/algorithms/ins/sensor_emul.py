@@ -14,6 +14,7 @@ class SensorEmulationAlg(InsAlgorithm):
         super().__init__()
         self.inputs = ["time", "ref_pos", "ref_vel", "ref_att"]
         self.outputs = ["ref_gyro", "ref_accel", "gyro", "accel", "gps_ecef", "gps"]
+        self.name = "INS-IMU Sensor Emulation"
         self.imu = imu
         self.gps = gps
 

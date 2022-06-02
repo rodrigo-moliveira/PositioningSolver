@@ -12,6 +12,7 @@ from PositioningSolver.src.ins.data_mng.unit_conversions import convert_unit
 from PositioningSolver.src.ins.mechanization.dynamics import velE2velN, velB2velN
 from PositioningSolver.src.ins.mechanization.gravity import lla2lld, ecef2lld
 from PositioningSolver.src.io_manager.import_pvat import read_csv
+from PositioningSolver.src.quality_check.qm_ins import INSQualityManager
 
 
 class InsAlgorithmManager:
@@ -145,7 +146,7 @@ class InsAlgorithmManager:
             if _data is not None:
                 self.data_manager.add_data(_name, _data)
 
-    def results(self, data_dir=None, performance=False):
+    def results(self, data_dir=None, performance=False, plot=False):
         #### check data dir
 
         if data_dir is not None:  # data_dir specified, meaning to save .csv files
@@ -154,14 +155,7 @@ class InsAlgorithmManager:
             # save data files
             self.data_manager.save_data(data_dir)
 
-        if performance:
-            # call performance evaluation..
-            summary = self.data_manager.performance_evaluation()
-            if data_dir is not None:
-                pass
-                # save summary file
-            print(summary)
-
+        INSQualityManager.process(self.data_manager, data_dir, self.algorithm.name, performance, plot)
 
     def _check_data_dir(self, data_dir):
         """

@@ -69,7 +69,7 @@ def main():
     )
 
     ins_mng.run()
-    ins_mng.results("", performance=True)
+    ins_mng.results("", performance=True, plot=True)
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ from PositioningSolver.src.ins.mechanization.propagation import INSPropagator
 class FreeIntegrationAlg(InsAlgorithm):
     def __init__(self, r0, v0, att0, integration="euler", attitude_form="euler"):
         super().__init__()
+        self.name = "INS-IMU Free Integration"
         self.inputs = ["time", "gyro", "accel"]
         self.outputs = ["pos", "vel", "att"]  # TODO save vel_ecef, vel_ned, vel_body ???
 
