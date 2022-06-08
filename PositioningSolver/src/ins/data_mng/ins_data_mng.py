@@ -3,7 +3,6 @@ import numpy as np
 from PositioningSolver.src.data_types.containers.Container import Container
 from PositioningSolver.src.ins.data_mng.data_sim import SimulatedData
 
-
 # ref variables:
 #   time
 #   ref_pos. Reference position in navigation frame n (NED). Form is LLD (latitude, longitude, down)
@@ -31,22 +30,31 @@ class InsDataManager(Container):
         # Reference time
         self.time = SimulatedData(name="time", description="sample time", units=["s"], legend=["time"])
 
-        # Reference Position
+        # Reference Position in LLD
         self.ref_pos = SimulatedData(name="ref_pos",
                                      description="true position in the navigation frame (NED), in LLD form",
                                      units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
-                                     legend=['ref_pos_lat', 'ref_pos_lon', 'ref_pos_down'])
+                                     legend=['ref_pos_lat', 'ref_pos_lon', 'ref_pos_down'],
+                                     title="Position (LLD)")
+        # Reference Position in ECEF
+        self.ref_pos_ecef = SimulatedData(name="ref_pos_ecef",
+                                          description="true position in the ECEF Frame",
+                                          units=['m', 'm', 'm'], output_units=['m', 'm', 'm'],
+                                          legend=['ref_pos_ecef_X', 'ref_pos_ecef_Y', 'ref_pos_ecef_Z'],
+                                          title="Position (ECEF)")
 
         # Reference Velocity
         self.ref_vel = SimulatedData(name='ref_vel', description='true velocity in the navigation frame (NED)',
                                      units=['m/s', 'm/s', 'm/s'],
-                                     legend=['ref_vel_N', 'ref_vel_E', 'ref_vel_D'])
+                                     legend=['ref_vel_N', 'ref_vel_E', 'ref_vel_D'],
+                                     title="Velocity v_eb^n (NED)")
 
         # Reference Attitude
         self.ref_att = SimulatedData(name='ref_att', description='true attitude (Euler angles, ZYX convention)',
                                      units=['rad', 'rad', 'rad'],
                                      output_units=['deg', 'deg', 'deg'],
-                                     legend=['ref_Roll', 'ref_Pitch', 'ref_Yaw'])
+                                     legend=['ref_Roll', 'ref_Pitch', 'ref_Yaw'],
+                                     title="Attitude (Euler Angles)")
 
         #######################
         # Sensor Measurements #
@@ -58,14 +66,16 @@ class InsDataManager(Container):
                                       units=['rad/s', 'rad/s', 'rad/s'],
                                       output_units=['deg/s', 'deg/s', 'deg/s'],
                                       legend=['ref_gyro_x', 'ref_gyro_y', 'ref_gyro_z'],
-                                      ignore_first_row=True)
+                                      ignore_first_row=True,
+                                      title="Gyroscope Readouts w_ib_b")
 
         # True (errorless) accelerometer readout measurements
         self.ref_accel = SimulatedData(name='ref_accel',
                                        description='true acceleration in the body frame (f_ib_b)',
                                        units=['m/s^2', 'm/s^2', 'm/s^2'],
                                        legend=['ref_accel_x', 'ref_accel_y', 'ref_accel_z'],
-                                       ignore_first_row=True)
+                                       ignore_first_row=True,
+                                       title="Accelerometer Readouts f_ib_b")
 
         # Real (with error) gyro readout measurements
         self.gyro = SimulatedData(name='gyro',
@@ -73,14 +83,16 @@ class InsDataManager(Container):
                                   units=['rad/s', 'rad/s', 'rad/s'],
                                   output_units=['deg/s', 'deg/s', 'deg/s'],
                                   legend=['gyro_x', 'gyro_y', 'gyro_z'],
-                                  ignore_first_row=True)
+                                  ignore_first_row=True,
+                                  title="Gyroscope Readouts w_ib_b")
 
         # Real (with error) accelerometer readout measurements
         self.accel = SimulatedData(name='accel',
                                    description='accelerometer measurements f_ib_b',
                                    units=['m/s^2', 'm/s^2', 'm/s^2'],
                                    legend=['accel_x', 'accel_y', 'accel_z'],
-                                   ignore_first_row=True)
+                                   ignore_first_row=True,
+                                   title="Accelerometer Readouts f_ib_b")
 
         # Real (with error) GPS measurements
         self.gps = SimulatedData(name='gps',
@@ -89,7 +101,8 @@ class InsDataManager(Container):
                                  output_units=['deg', 'deg', 'm', 'm/s', 'm/s', 'm/s'],
                                  legend=['gps_lat', 'gps_lon', 'gps_down',
                                          'gps_vN', 'gps_vE', 'gps_vD'],
-                                 ignore_first_row=True)
+                                 ignore_first_row=True,
+                                 title="GPS Readouts")
 
         # ECEF GPS measurements
         self.gps_ecef = SimulatedData(name='gps_ecef',
@@ -98,7 +111,8 @@ class InsDataManager(Container):
                                       output_units=['m', 'm', 'm', 'm/s', 'm/s', 'm/s'],
                                       legend=['gps_ecef_x', 'gps_ecef_y', 'gps_ecef_z',
                                               'gps_vx', 'gps_vy', 'gps_vz'],
-                                      ignore_first_row=True)
+                                      ignore_first_row=True,
+                                      title="GPS Readouts")
 
         ################################
         # Computed Position & Velocity #
@@ -109,20 +123,29 @@ class InsDataManager(Container):
                                  description="estimated position in the navigation frame (NED), in LLD form "
                                              "(latitude, longitude, altitude)",
                                  units=['rad', 'rad', 'm'], output_units=['deg', 'deg', 'm'],
-                                 legend=['pos_lat', 'pos_lon', 'pos_down'])
+                                 legend=['pos_lat', 'pos_lon', 'pos_down'],
+                                 title="Position (LLD)")
+
+        self.pos_ecef = SimulatedData(name="pos_ecef",
+                                      description="estimated position in the ECEF Frame",
+                                      units=['m', 'm', 'm'], output_units=['m', 'm', 'm'],
+                                      legend=['pos_ecef_X', 'pos_ecef_Y', 'pos_ecef_Z'],
+                                      title="Position (ECEF)")
 
         # Computed Velocity
         self.vel = SimulatedData(name='vel', description='estimated velocity in the navigation frame NED'
                                                          ' (v_North, v_East, v_Down)',
                                  units=['m/s', 'm/s', 'm/s'],
-                                 legend=['vel_N', 'vel_E', 'vel_D'])
+                                 legend=['vel_N', 'vel_E', 'vel_D'],
+                                 title="Velocity v_eb^n (NED)")
 
         # Computed Attitude
         self.att = SimulatedData(name='att', description='estimated attitude (Euler angles roll, pitch, yaw, '
                                                          'ZYX convention)',
                                  units=['rad', 'rad', 'rad'],
                                  output_units=['deg', 'deg', 'deg'],
-                                 legend=['Roll', 'Pitch', 'Yaw'])
+                                 legend=['Roll', 'Pitch', 'Yaw'],
+                                 title="Attitude (Euler Angles)")
 
         # available data for the current simulation
         self._available = []

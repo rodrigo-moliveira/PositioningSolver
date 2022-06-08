@@ -53,6 +53,7 @@ class InsAlgorithmManager:
         else:  # position is already in LLD form
             position = convert_unit(position, position_dict.get("units"), ("rad", "rad", "m"))
         self.data_manager.add_data("ref_pos", position, ("rad", "rad", "m"))
+        # TODO: add here the ref_pos_ecef!!!
 
         # read time
         time_arr = read_csv(time_dict.get("filepath"),
@@ -146,7 +147,7 @@ class InsAlgorithmManager:
             if _data is not None:
                 self.data_manager.add_data(_name, _data)
 
-    def results(self, data_dir=None, performance=False, plot=False):
+    def results(self, data_dir=None, performance=False, plot=False, separate_axis=False):
         #### check data dir
 
         if data_dir is not None:  # data_dir specified, meaning to save .csv files
@@ -155,7 +156,7 @@ class InsAlgorithmManager:
             # save data files
             self.data_manager.save_data(data_dir)
 
-        INSQualityManager.process(self.data_manager, data_dir, self.algorithm.name, performance, plot)
+        INSQualityManager.process(self.data_manager, data_dir, self.algorithm.name, performance, plot, separate_axis)
 
     def _check_data_dir(self, data_dir):
         """

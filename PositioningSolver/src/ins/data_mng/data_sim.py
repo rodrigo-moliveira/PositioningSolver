@@ -7,7 +7,8 @@ class SimulatedData:
     """
     Simulated data
     """
-    def __init__(self, name, description, units=None, output_units=None, legend=None, ignore_first_row=False):
+    def __init__(self, name, description, units=None, output_units=None, legend=None, ignore_first_row=False,
+                 title=""):
         """
         Set up data properties (input/output data). All data are stored in a TimeSeries, numpy array, scalar: self.data.
         * In case of numpy array, it is of shape (m,n)
@@ -32,6 +33,7 @@ class SimulatedData:
         """
         self.name = name
         self.description = description
+        self.title = title
         # units of self.data
         if units is None:
             self.units = ['']

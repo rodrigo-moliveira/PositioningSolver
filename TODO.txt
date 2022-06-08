@@ -1,4 +1,5 @@
 Limpar a classe ins_integration
+Adicionar a parte da position ECEF!!
 Adicionar uma classe de performance evaluation (comparar pvat de ref com o estimado)
 Implementar o propagador runge kutta no ins_integration. Implementar também o propagador da geonumerics :)
 Release -> Limpar o código. Uniformizar corridas INS / GNSS. Criar um log, documentar as funçoes principais...

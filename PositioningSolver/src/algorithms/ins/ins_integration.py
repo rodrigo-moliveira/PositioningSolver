@@ -13,7 +13,7 @@ class FreeIntegrationAlg(InsAlgorithm):
         self.name = "INS-IMU Free Integration"
         self.inputs = ["time", "gyro", "accel"]
         self.outputs = ["pos", "vel", "att"]  # TODO save vel_ecef, vel_ned, vel_body ???
-
+        # TODO: save pos_ecef...
         # store initial condition
         self.r0 = r0  # initial position in lld form
         self.v0 = v0  # initial velocity in ned, v_eb_n
@@ -109,6 +109,7 @@ class FreeIntegrationAlg(InsAlgorithm):
         self.results.append(self.pos)
         self.results.append(self.vel_eb_n)
         self.results.append(self.att)
+        # TODO: convert lld to ecef and save.
 
     def compute_rk4(self, time, gyro, accel):
         if len(time) != len(gyro) or len(time) != len(accel) or len(gyro) != len(accel):
@@ -191,46 +192,3 @@ class FreeIntegrationAlg(InsAlgorithm):
         self.results.append(self.pos)
         self.results.append(self.vel_eb_n)
         self.results.append(self.att)
-
-        #for i in range(0, len(time)-1, 2):
-
-
-        """print(i)
-        # get state at t_i
-        att = self.att[i]
-        c_bn = self.c_bn[i]
-        v_eb_n = self.vel_eb_n[i]
-        lld = self.pos[i]
-        w_ib_b = gyro[i]
-        f_ib_b = accel[i]
-        step = time[i+1] - time[i]
-
-        # implement x_dot = f(x,u)
-        # lld_dot, vel_dot, att_dot = self.prop.ins_diff_eq(step, lld, att, v_eb_n, w_ib_b, f_ib_b, c_bn=c_bn)
-
-        # euler integration step from t_{i-1} to t_{i} and save results at index i
-        # #pos_i = lld + lld_dot * step
-        # vel_i = v_eb_n + vel_dot * step
-
-        # attitude update depends on state form (may be euler angles or dcm matrix)
-        if self.attitude_form == "euler":
-            att_i = att + att_dot * step
-            fix_angles(att_i)
-            c_bn_i = mechanization.matrix_ned2body(att_i).T
-
-        else:  # self.attitude_form == "dcm"
-            c_bn_i = c_bn @ att_dot
-            att_i = dcm2euler(c_bn_i)
-            fix_angles(att_i)
-        
-
-        # save results for this iteration
-        self.c_bn.append(np.eye(3))
-        if i % 2 == 0:
-            
-        else:
-            self.vel_eb_n[i] = None
-            self.pos[i] = None
-            self.att[i] = None
-        """
-
